@@ -1,0 +1,29 @@
+{
+  "generator-jhipster": {
+    "appsFolders": [
+      "gateway",
+      "auth",
+      "customer",
+      "product",
+      "order"
+    ],
+    "directoryPath": "../",
+    "clusteredDbApps": [],
+    "serviceDiscoveryType": "eureka",
+    "dockerRepositoryName": "jebel",
+    "dockerPushCommand": "docker push",
+    "kubernetesNamespace": "default",
+    "kubernetesServiceType": "LoadBalancer",
+    "kubernetesUseDynamicStorage": false,
+    "kubernetesStorageClassName": "",
+    "ingressDomain": "",
+    "monitoring": "no",
+    "istio": false,
+    "deploymentType": "kubernetes",
+    "gatewayType": "springcloudgateway",
+    "ingressType": "nginx",
+    "openshiftNamespace": "default",
+    "storageType": "ephemeral",
+    "registryReplicas": "2"
+  }
+}

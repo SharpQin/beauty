@@ -1,0 +1,340 @@
+application {
+  config {
+    baseName gateway,
+    serverPort 8080,
+    applicationType gateway,
+    serviceDiscoveryType eureka,
+    packageName cc.microthink.gateway,
+    authenticationType jwt,
+    buildTool maven,
+    cacheProvider ehcache,
+    clientFramework vue,
+    clientPackageManager npm,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    enableHibernateCache true,
+    enableSwaggerCodegen false,
+    enableTranslation true,
+    jhiPrefix au,
+    languages [en,zh-cn],
+    messageBroker false,
+    nativeLanguage en,
+    reactive true,
+    searchEngine false,
+    skipClient false,
+    skipServer false,
+    skipUserManagement false,
+    testFrameworks [],
+    dtoSuffix DTO,
+    entitySuffix false,
+    websocket false
+  }
+  entities *
+}
+
+application {
+  config {
+    baseName auth,
+    serverPort 19000,
+    applicationType microservice,
+    serviceDiscoveryType eureka,
+    packageName cc.microthink.auth,
+    authenticationType jwt,
+    buildTool maven,
+    cacheProvider hazelcast,
+    clientFramework no,
+    clientPackageManager npm,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    enableHibernateCache true,
+    enableSwaggerCodegen true,
+    enableTranslation true,
+    jhiPrefix [],
+    languages [en,zh-cn],
+    messageBroker kafka,
+    nativeLanguage en,
+    reactive true,
+    searchEngine false,
+    skipClient true,
+    skipServer false,
+    skipUserManagement true,
+    testFrameworks [],
+    dtoSuffix DTO,
+    entitySuffix false,
+    websocket false
+  }
+  entities Role, Permission, Menu
+  service Role, Menu with serviceClass
+  paginate Role, Menu with pagination
+}
+
+application {
+  config {
+    baseName customer,
+    serverPort 19010,
+    applicationType microservice,
+    serviceDiscoveryType eureka,
+    packageName cc.microthink.customer,
+    authenticationType jwt,
+    buildTool maven,
+    cacheProvider hazelcast,
+    clientFramework no,
+    clientPackageManager npm,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    enableHibernateCache true,
+    enableSwaggerCodegen true,
+    enableTranslation true,
+    jhiPrefix [],
+    languages [en,zh-cn],
+    messageBroker kafka,
+    nativeLanguage en,
+    reactive false,
+    searchEngine false,
+    skipClient true,
+    skipServer false,
+    skipUserManagement true,
+    testFrameworks [],
+    dtoSuffix DTO,
+    entitySuffix false,
+    websocket false
+  }
+  entities Customer, Address, CusAccount
+  service Customer with serviceClass
+  paginate Customer with pagination
+}
+
+application {
+  config {
+    baseName product,
+    serverPort 19030,
+    applicationType microservice,
+    serviceDiscoveryType eureka,
+    packageName cc.microthink.product,
+    authenticationType jwt,
+    buildTool maven,
+    cacheProvider hazelcast,
+    clientFramework no,
+    clientPackageManager npm,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    enableHibernateCache true,
+    enableSwaggerCodegen true,
+    enableTranslation true,
+    jhiPrefix [],
+    languages [en,zh-cn],
+    messageBroker kafka,
+    nativeLanguage en,
+    reactive false,
+    searchEngine elasticsearch,
+    skipClient true,
+    skipServer false,
+    skipUserManagement true,
+    testFrameworks [],
+    dtoSuffix DTO,
+    entitySuffix false,
+    websocket false
+  }
+  entities Product, ProductCategory, ProductItem
+  service Product, ProductCategory with serviceClass
+  paginate Product, ProductCategory with pagination
+}
+
+application {
+  config {
+    baseName order,
+    serverPort 19040,
+    applicationType microservice,
+    serviceDiscoveryType eureka,
+    packageName cc.microthink.order,
+    authenticationType jwt,
+    buildTool maven,
+    cacheProvider hazelcast,
+    clientFramework no,
+    clientPackageManager npm,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    enableHibernateCache true,
+    enableSwaggerCodegen true,
+    enableTranslation true,
+    jhiPrefix [],
+    languages [en,zh-cn],
+    messageBroker kafka,
+    nativeLanguage en,
+    reactive false,
+    searchEngine false,
+    skipClient true,
+    skipServer false,
+    skipUserManagement true,
+    testFrameworks [],
+    dtoSuffix DTO,
+    entitySuffix false,
+    websocket false
+  }
+  entities Order, OrderItem
+  service Order with serviceClass
+  paginate Order with pagination
+}
+
+entity Role {
+  name String required maxlength(30),
+  dsc String
+}
+
+entity Permission {
+  authKey String required maxlength(30)
+}
+
+entity Customer {
+  name String required maxlength(50),
+  phone String maxlength(15),
+  email String maxlength(20),
+  birthday LocalDate,
+  imageUrl String maxlength(50),
+  langKey String minlength(2) maxlength(10),
+  vip Integer required,
+  level Integer required,
+  point Integer required,
+  activated Boolean,
+  createdDate Instant,
+  lastModifiedDate Instant
+}
+
+entity Address {
+  postalCode String maxlength(10),
+  city String maxlength(30),
+  details String required maxlength(120),
+  defaultAddr Boolean
+}
+
+entity CusAccount {
+  name String required maxlength(20),
+  cardNo String required maxlength(40),
+  accountType AccountType
+}
+
+enum AccountType {
+  BANK, CREDIT
+}
+
+entity Menu {
+  name String required maxlength(30),
+  title String required maxlength(30),
+  link String required maxlength(60),
+  method String required maxlength(10),
+  authKey String required maxlength(30),
+  showed Boolean,
+  parent Long,
+}
+
+entity Product {
+  name String required,
+  price BigDecimal required,
+  type ProductType,
+  image String,
+  releaseDate LocalDate,
+  liveTime Instant,
+  createdTime Instant,
+  updatedTime Instant,
+  stock Integer,
+  showed Boolean,
+  status ProductStatus,
+  dsc String,
+}
+
+enum ProductType {
+  SUIT, SINGLE
+}
+
+enum ProductStatus {
+  AVAILABLE, SELL_OUT
+}
+
+entity ProductCategory {
+  name String required
+  dsc String
+}
+
+entity ProductItem {
+  name String,
+  amount Integer,
+  image String,
+  dsc String,
+}
+
+relationship OneToMany {
+  Product{items} to ProductItem{product},
+  ProductCategory to Product{category(name)}
+}
+
+entity Order {
+  serialNo UUID,
+  price BigDecimal,
+  status OrderStatus,
+  custId Long,
+  createdTime Instant,
+  actionTime Instant,
+  remark String,
+}
+
+enum OrderStatus {
+  PENDING, COMPLETED, CANCELLED
+}
+
+entity OrderItem {
+  prodId Long required,
+  quantity Integer required min(0),
+  totalPrice BigDecimal required min(0),
+  price BigDecimal required min(0),
+  status OrderItemStatus required
+}
+
+enum OrderItemStatus {
+    AVAILABLE, OUT_OF_STOCK, BACK_ORDER
+}
+
+relationship ManyToMany {
+  Role{permissions required} to Permission{roles}
+}
+
+relationship OneToMany {
+  Customer{addresses} to Address{customer},
+  Customer{accounts} to CusAccount{customer}
+}
+
+relationship OneToMany {
+  Order{items} to OrderItem{order}
+}
+
+microservice Role, Permission, Menu with auth
+microservice Customer, Address, CusAccount with customer
+microservice Product, ProductCategory, ProductItem with product
+microservice Order, OrderItem with order
+
+
+deployment {
+  deploymentType kubernetes
+  directoryPath "../"
+  appsFolders [gateway, auth, customer, product, order]
+  clusteredDbApps []
+  gatewayType springcloudgateway
+  monitoring no
+  serviceDiscoveryType eureka
+  dockerRepositoryName "jebel"
+  dockerPushCommand "docker push"
+  kubernetesNamespace default
+  kubernetesUseDynamicStorage false
+  kubernetesStorageClassName ""
+  kubernetesServiceType LoadBalancer
+  //ingressDomain []
+  ingressType nginx
+  istio false
+  openshiftNamespace default
+  storageType ephemeral
+  registryReplicas 2
+}
