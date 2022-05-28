@@ -1,0 +1,38 @@
+{
+  "applications": ["gateway", "auth"],
+  "changelogDate": "20220528091224",
+  "clientRootFolder": "auth",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "role",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "30"
+    },
+    {
+      "fieldName": "dsc",
+      "fieldType": "String"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "auth",
+  "name": "Role",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "permission",
+      "otherEntityRelationshipName": "roles",
+      "ownerSide": true,
+      "relationshipName": "permissions",
+      "relationshipType": "many-to-many",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "service": "serviceClass"
+}
