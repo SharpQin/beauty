@@ -1,0 +1,10 @@
+{
+  "gatewayApp": {
+    "OrderStatus": {
+      "null": "",
+      "PENDING": "PENDING",
+      "COMPLETED": "COMPLETED",
+      "CANCELLED": "CANCELLED"
+    }
+  }
+}

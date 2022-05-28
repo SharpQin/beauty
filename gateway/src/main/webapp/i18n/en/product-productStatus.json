@@ -1,0 +1,9 @@
+{
+  "gatewayApp": {
+    "ProductStatus": {
+      "null": "",
+      "AVAILABLE": "AVAILABLE",
+      "SELL_OUT": "SELL_OUT"
+    }
+  }
+}

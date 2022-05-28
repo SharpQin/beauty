@@ -1,0 +1,31 @@
+{
+  "gatewayApp": {
+    "customerCusAccount": {
+      "home": {
+        "title": "Cus Accounts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Cus Account",
+        "createOrEditLabel": "Create or edit a Cus Account",
+        "notFound": "No Cus Accounts found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Cus Account {{ id }}?"
+      },
+      "detail": {
+        "title": "Cus Account"
+      },
+      "id": "ID",
+      "name": "Name",
+      "cardNo": "Card No",
+      "accountType": "Account Type",
+      "customer": "Customer"
+    }
+  },
+  "customerApp": {
+    "customerCusAccount": {
+      "created": "A new Cus Account is created with identifier {{ param }}",
+      "updated": "A Cus Account is updated with identifier {{ param }}",
+      "deleted": "A Cus Account is deleted with identifier {{ param }}"
+    }
+  }
+}

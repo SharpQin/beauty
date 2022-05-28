@@ -1,0 +1,32 @@
+{
+  "gatewayApp": {
+    "productProductItem": {
+      "home": {
+        "title": "Product Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Product Item",
+        "createOrEditLabel": "Create or edit a Product Item",
+        "notFound": "No Product Items found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Product Item {{ id }}?"
+      },
+      "detail": {
+        "title": "Product Item"
+      },
+      "id": "ID",
+      "name": "Name",
+      "amount": "Amount",
+      "image": "Image",
+      "dsc": "Dsc",
+      "product": "Product"
+    }
+  },
+  "productApp": {
+    "productProductItem": {
+      "created": "A new Product Item is created with identifier {{ param }}",
+      "updated": "A Product Item is updated with identifier {{ param }}",
+      "deleted": "A Product Item is deleted with identifier {{ param }}"
+    }
+  }
+}

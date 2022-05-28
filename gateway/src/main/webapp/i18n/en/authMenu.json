@@ -1,0 +1,34 @@
+{
+  "gatewayApp": {
+    "authMenu": {
+      "home": {
+        "title": "Menus",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Menu",
+        "createOrEditLabel": "Create or edit a Menu",
+        "notFound": "No Menus found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Menu {{ id }}?"
+      },
+      "detail": {
+        "title": "Menu"
+      },
+      "id": "ID",
+      "name": "Name",
+      "title": "Title",
+      "link": "Link",
+      "method": "Method",
+      "authKey": "Auth Key",
+      "showed": "Showed",
+      "parent": "Parent"
+    }
+  },
+  "authApp": {
+    "authMenu": {
+      "created": "A new Menu is created with identifier {{ param }}",
+      "updated": "A Menu is updated with identifier {{ param }}",
+      "deleted": "A Menu is deleted with identifier {{ param }}"
+    }
+  }
+}

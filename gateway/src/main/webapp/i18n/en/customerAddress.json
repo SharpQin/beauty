@@ -1,0 +1,32 @@
+{
+  "gatewayApp": {
+    "customerAddress": {
+      "home": {
+        "title": "Addresses",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Address",
+        "createOrEditLabel": "Create or edit a Address",
+        "notFound": "No Addresses found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Address {{ id }}?"
+      },
+      "detail": {
+        "title": "Address"
+      },
+      "id": "ID",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "details": "Details",
+      "defaultAddr": "Default Addr",
+      "customer": "Customer"
+    }
+  },
+  "customerApp": {
+    "customerAddress": {
+      "created": "A new Address is created with identifier {{ param }}",
+      "updated": "A Address is updated with identifier {{ param }}",
+      "deleted": "A Address is deleted with identifier {{ param }}"
+    }
+  }
+}

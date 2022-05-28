@@ -1,0 +1,41 @@
+{
+  "gatewayApp": {
+    "customerCustomer": {
+      "home": {
+        "title": "Customers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Customer",
+        "createOrEditLabel": "Create or edit a Customer",
+        "notFound": "No Customers found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Customer {{ id }}?"
+      },
+      "detail": {
+        "title": "Customer"
+      },
+      "id": "ID",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "birthday": "Birthday",
+      "imageUrl": "Image Url",
+      "langKey": "Lang Key",
+      "vip": "Vip",
+      "level": "Level",
+      "point": "Point",
+      "activated": "Activated",
+      "createdDate": "Created Date",
+      "lastModifiedDate": "Last Modified Date",
+      "addresses": "Addresses",
+      "accounts": "Accounts"
+    }
+  },
+  "customerApp": {
+    "customerCustomer": {
+      "created": "A new Customer is created with identifier {{ param }}",
+      "updated": "A Customer is updated with identifier {{ param }}",
+      "deleted": "A Customer is deleted with identifier {{ param }}"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "gatewayApp": {
+    "customerAddress": {
+      "home": {
+        "title": "Addresses",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "创建新 Address",
+        "createOrEditLabel": "创建或编辑 Address",
+        "notFound": "No Addresses found"
+      },
+      "delete": {
+        "question": "你确定要删除 Address {{ id }} 吗？"
+      },
+      "detail": {
+        "title": "Address"
+      },
+      "id": "ID",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "details": "Details",
+      "defaultAddr": "Default Addr",
+      "customer": "Customer"
+    }
+  },
+  "customerApp": {
+    "customerAddress": {
+      "created": "Address {{ param }} 创建成功",
+      "updated": "Address {{ param }} 更新成功",
+      "deleted": "Address {{ param }} 删除成功"
+    }
+  }
+}

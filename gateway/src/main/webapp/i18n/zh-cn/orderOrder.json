@@ -1,0 +1,35 @@
+{
+  "gatewayApp": {
+    "orderOrder": {
+      "home": {
+        "title": "Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "创建新 Order",
+        "createOrEditLabel": "创建或编辑 Order",
+        "notFound": "No Orders found"
+      },
+      "delete": {
+        "question": "你确定要删除 Order {{ id }} 吗？"
+      },
+      "detail": {
+        "title": "Order"
+      },
+      "id": "ID",
+      "serialNo": "Serial No",
+      "price": "Price",
+      "status": "Status",
+      "custId": "Cust Id",
+      "createdTime": "Created Time",
+      "actionTime": "Action Time",
+      "remark": "Remark",
+      "items": "Items"
+    }
+  },
+  "orderApp": {
+    "orderOrder": {
+      "created": "Order {{ param }} 创建成功",
+      "updated": "Order {{ param }} 更新成功",
+      "deleted": "Order {{ param }} 删除成功"
+    }
+  }
+}
