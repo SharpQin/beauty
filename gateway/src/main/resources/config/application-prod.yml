@@ -53,16 +53,16 @@ spring:
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod
-    url: jdbc:postgresql://localhost:5432/gateway
+    url: jdbc:postgresql://localhost:5432/beauty_gateway
   mail:
     host: localhost
     port: 25
     username:
     password:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/gateway
-    username: gateway
-    password:
+    url: r2dbc:postgresql://localhost:5432/beauty_gateway
+    username: postgres
+    password: 123456
   thymeleaf:
     cache: true
   sleuth:

@@ -5,7 +5,7 @@
   "databaseType": "sql",
   "dto": "no",
   "embedded": false,
-  "entityTableName": "order",
+  "entityTableName": "or_order",
   "fields": [
     {
       "fieldName": "serialNo",

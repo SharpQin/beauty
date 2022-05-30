@@ -12,6 +12,6 @@
                                  baseTableName="order_item"
                                  constraintName="fk_order_item__order_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="order"/>
+                                 referencedTableName="or_order"/>
     </changeSet>
 </databaseChangeLog>

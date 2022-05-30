@@ -10,7 +10,7 @@
         Added the entity Order.
     -->
     <changeSet id="20220528091024-1" author="jhipster">
-        <createTable tableName="order">
+        <createTable tableName="or_order">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -37,8 +37,8 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="order" columnName="created_time" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="order" columnName="action_time" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="or_order" columnName="created_time" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="or_order" columnName="action_time" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -53,9 +53,9 @@
     -->
     <changeSet id="20220528091024-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/order.csv"
+                  file="config/liquibase/fake-data/or_order.csv"
                   separator=";"
-                  tableName="order"
+                  tableName="or_order"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="serial_no" type="${uuidType}"/>

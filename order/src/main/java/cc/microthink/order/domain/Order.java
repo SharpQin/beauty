@@ -16,7 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  * A Order.
  */
 @Entity
-@Table(name = "order")
+@Table(name = "or_order")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Order implements Serializable {
 
