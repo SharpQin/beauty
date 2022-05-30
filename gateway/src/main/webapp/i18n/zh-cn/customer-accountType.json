@@ -1,9 +1,0 @@
-{
-  "gatewayApp": {
-    "AccountType": {
-      "null": "",
-      "BANK": "BANK",
-      "CREDIT": "CREDIT"
-    }
-  }
-}
