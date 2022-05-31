@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.MapReactiveUserDetailsServi
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
@@ -36,34 +38,52 @@ public class SecurityConfiguration {
 
     private final JHipsterProperties jHipsterProperties;
 
+    private final ReactiveUserDetailsService userDetailsService;
+
     private final TokenProvider tokenProvider;
 
     private final SecurityProblemSupport problemSupport;
 
     public SecurityConfiguration(
+        ReactiveUserDetailsService userDetailsService,
         TokenProvider tokenProvider,
         JHipsterProperties jHipsterProperties,
         SecurityProblemSupport problemSupport
     ) {
+        this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
         this.jHipsterProperties = jHipsterProperties;
         this.problemSupport = problemSupport;
     }
 
     @Bean
-    public MapReactiveUserDetailsService userDetailsService(SecurityProperties properties) {
-        SecurityProperties.User user = properties.getUser();
-        UserDetails userDetails = User
-            .withUsername(user.getName())
-            .password("{noop}" + user.getPassword())
-            .roles(StringUtils.toStringArray(user.getRoles()))
-            .build();
-        return new MapReactiveUserDetailsService(userDetails);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
+//    @Bean
+//    public MapReactiveUserDetailsService userDetailsService(SecurityProperties properties) {
+//        SecurityProperties.User user = properties.getUser();
+//        UserDetails userDetails = User
+//            .withUsername(user.getName())
+//            .password("{noop}" + user.getPassword())
+//            .roles(StringUtils.toStringArray(user.getRoles()))
+//            .build();
+//        return new MapReactiveUserDetailsService(userDetails);
+//    }
+
+//    @Bean
+//    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService) {
+//        return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+//    }
+
     @Bean
-    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService) {
-        return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+    public ReactiveAuthenticationManager reactiveAuthenticationManager() {
+        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(
+            userDetailsService
+        );
+        authenticationManager.setPasswordEncoder(passwordEncoder());
+        return authenticationManager;
     }
 
     @Bean
@@ -77,6 +97,7 @@ public class SecurityConfiguration {
             .csrf()
                 .disable()
             .addFilterAt(new JWTFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+            .authenticationManager(reactiveAuthenticationManager())    //TODO note: check?
             .exceptionHandling()
                 .accessDeniedHandler(problemSupport)
                 .authenticationEntryPoint(problemSupport)
@@ -94,15 +115,25 @@ public class SecurityConfiguration {
             .requestCache(NoOpServerRequestCache.getInstance())
         .and()
             .authorizeExchange()
+
             .pathMatchers("/api/authenticate").permitAll()
+            .pathMatchers("/api/register").permitAll()
+            .pathMatchers("/api/activate").permitAll()
+            .pathMatchers("/api/account/reset-password/init").permitAll()
+            .pathMatchers("/api/account/reset-password/finish").permitAll()
             .pathMatchers("/api/auth-info").permitAll()
+
             .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .pathMatchers("/api/**").authenticated()
+
+
             .pathMatchers("/management/health").permitAll()
             .pathMatchers("/management/health/**").permitAll()
             .pathMatchers("/management/info").permitAll()
             .pathMatchers("/management/prometheus").permitAll()
             .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
+
+
         // @formatter:on
         return http.build();
     }
