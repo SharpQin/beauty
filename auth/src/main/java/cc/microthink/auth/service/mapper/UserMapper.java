@@ -1,6 +1,7 @@
 package cc.microthink.auth.service.mapper;
 
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.service.dto.AdminUserDTO;
 import cc.microthink.auth.service.dto.UserDTO;
@@ -54,22 +55,23 @@ public class UserMapper {
             user.setImageUrl(userDTO.getImageUrl());
             user.setActivated(userDTO.isActivated());
             user.setLangKey(userDTO.getLangKey());
-            Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
-            user.setAuthorities(authorities);
+            Set<Role> authorities = userDTO.getAuthorities(); // this.authoritiesFromStrings(userDTO.getAuthorities());
+            user.setRoles(authorities);
             return user;
         }
     }
 
-    private Set<Authority> authoritiesFromStrings(Set<String> authoritiesAsString) {
-        Set<Authority> authorities = new HashSet<>();
+    private Set<Role> authoritiesFromStrings(Set<String> authoritiesAsString) {
+        Set<Role> authorities = new HashSet<>();
 
         if (authoritiesAsString != null) {
             authorities =
                 authoritiesAsString
                     .stream()
-                    .map(string -> {
-                        Authority auth = new Authority();
-                        auth.setName(string);
+                    .map(roleName -> {
+                        Role auth = new Role();
+                        //auth.setId(roleId);
+                        auth.setName(roleName);
                         return auth;
                     })
                     .collect(Collectors.toSet());

@@ -2,8 +2,10 @@ package cc.microthink.auth.service;
 
 import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.repository.AuthorityRepository;
+import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
 import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.security.SecurityUtils;
@@ -40,9 +42,9 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthorityRepository authorityRepository;
+    private final RoleRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository authorityRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
@@ -132,17 +134,17 @@ public class UserService {
                     newUser.setActivationKey(RandomUtil.generateActivationKey());
                     return newUser;
                 })
-            )
-            .flatMap(newUser -> {
-                Set<Authority> authorities = new HashSet<>();
-                return authorityRepository
-                    .findById(AuthoritiesConstants.USER)
-                    .map(authorities::add)
-                    .thenReturn(newUser)
-                    .doOnNext(user -> user.setAuthorities(authorities))
-                    .flatMap(this::saveUser)
-                    .doOnNext(user -> log.debug("Created Information for User: {}", user));
-            });
+            );
+//            .flatMap(newUser -> {
+//                Set<Authority> authorities = new HashSet<>();
+//                return authorityRepository
+//                    .findById(AuthoritiesConstants.USER)
+//                    .map(authorities::add)
+//                    .thenReturn(newUser)
+//                    .doOnNext(user -> user.setAuthorities(authorities))
+//                    .flatMap(this::saveUser)
+//                    .doOnNext(user -> log.debug("Created Information for User: {}", user));
+//            });
     }
 
     @Transactional
@@ -162,8 +164,9 @@ public class UserService {
         }
         return Flux
             .fromIterable(userDTO.getAuthorities() != null ? userDTO.getAuthorities() : new HashSet<>())
+            .map(role -> role.getId())
             .flatMap(authorityRepository::findById)
-            .doOnNext(authority -> user.getAuthorities().add(authority))
+            .doOnNext(authority -> user.getRoles().add(authority))
             .then(Mono.just(user))
             .publishOn(Schedulers.boundedElastic())
             .map(newUser -> {
@@ -198,11 +201,12 @@ public class UserService {
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
-                Set<Authority> managedAuthorities = user.getAuthorities();
+                Set<Role> managedAuthorities = user.getRoles();
                 managedAuthorities.clear();
                 return userRepository
                     .deleteUserAuthorities(user.getId())
                     .thenMany(Flux.fromIterable(userDTO.getAuthorities()))
+                    .map(role -> role.getId())
                     .flatMap(authorityRepository::findById)
                     .map(managedAuthorities::add)
                     .then(Mono.just(user));
@@ -266,8 +270,8 @@ public class UserService {
                     .save(user)
                     .flatMap(savedUser ->
                         Flux
-                            .fromIterable(user.getAuthorities())
-                            .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getName()))
+                            .fromIterable(user.getRoles())
+                            .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getId()))
                             .then(Mono.just(savedUser))
                     );
             });
@@ -343,7 +347,7 @@ public class UserService {
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)
-    public Flux<String> getAuthorities() {
-        return authorityRepository.findAll().map(Authority::getName);
+    public Flux<Role> getAuthorities() {
+        return authorityRepository.findAll(); //.map(Role::getName);
     }
 }

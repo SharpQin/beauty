@@ -1,5 +1,6 @@
 package cc.microthink.auth.web.rest;
 
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.service.UserService;
 import cc.microthink.auth.service.dto.UserDTO;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ public class PublicUserResource {
      * @return a string list of all roles.
      */
     @GetMapping("/authorities")
-    public Mono<List<String>> getAuthorities() {
+    public Mono<List<Role>> getAuthorities() {
         return userService.getAuthorities().collectList();
     }
 }

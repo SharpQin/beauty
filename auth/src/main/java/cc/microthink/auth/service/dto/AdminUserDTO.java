@@ -2,6 +2,7 @@ package cc.microthink.auth.service.dto;
 
 import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 
 import javax.validation.constraints.Email;
@@ -50,7 +51,9 @@ public class AdminUserDTO {
 
     private Instant lastModifiedDate;
 
-    private Set<String> authorities;
+    private Set<Role> authorities;
+
+    //private Set<Long> roleIds;
 
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
@@ -69,7 +72,8 @@ public class AdminUserDTO {
         this.createdDate = user.getCreatedDate();
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+        this.authorities = user.getRoles(); //.stream().map(Role::getName).collect(Collectors.toSet());
+        //this.roleIds = user.getRoles().stream().map(Role::getId).collect(Collectors.toSet());
     }
 
     public Long getId() {
@@ -168,11 +172,11 @@ public class AdminUserDTO {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public Set<String> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(Set<String> authorities) {
+    public void setAuthorities(Set<Role> authorities) {
         this.authorities = authorities;
     }
 

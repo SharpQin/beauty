@@ -2,8 +2,10 @@ package cc.microthink.auth.web.rest;
 
 import cc.microthink.auth.IntegrationTest;
 import cc.microthink.auth.config.Constants;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.repository.AuthorityRepository;
+import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
 import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.service.UserService;
@@ -43,7 +45,7 @@ class AccountResourceIT {
     private UserRepository userRepository;
 
     @Autowired
-    private AuthorityRepository authorityRepository;
+    private RoleRepository authorityRepository;
 
     @Autowired
     private UserService userService;
@@ -83,8 +85,8 @@ class AccountResourceIT {
 
     @Test
     void testGetExistingAccount() {
-        Set<String> authorities = new HashSet<>();
-        authorities.add(AuthoritiesConstants.ADMIN);
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
 
         AdminUserDTO user = new AdminUserDTO();
         user.setLogin(TEST_USER_LOGIN);
@@ -143,7 +145,9 @@ class AccountResourceIT {
         validUser.setEmail("test-register-valid@example.com");
         validUser.setImageUrl("http://placehold.it/50x50");
         validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        validUser.setAuthorities(authorities);
         assertThat(userRepository.findOneByLogin("test-register-valid").blockOptional()).isEmpty();
 
         accountWebTestClient
@@ -169,7 +173,9 @@ class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        invalidUser.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -195,7 +201,9 @@ class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        invalidUser.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -221,7 +229,9 @@ class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        invalidUser.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -247,7 +257,9 @@ class AccountResourceIT {
         invalidUser.setActivated(true);
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        invalidUser.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -273,7 +285,9 @@ class AccountResourceIT {
         firstUser.setEmail("alice@example.com");
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        firstUser.setAuthorities(authorities);
 
         // Duplicate login, different email
         ManagedUserVM secondUser = new ManagedUserVM();
@@ -337,7 +351,9 @@ class AccountResourceIT {
         firstUser.setEmail("test-register-duplicate-email@example.com");
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(2L));
+        firstUser.setAuthorities(authorities);
 
         // Register first user
         accountWebTestClient
@@ -430,7 +446,9 @@ class AccountResourceIT {
         validUser.setActivated(true);
         validUser.setImageUrl("http://placehold.it/50x50");
         validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-        validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
+        validUser.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -443,9 +461,9 @@ class AccountResourceIT {
 
         Optional<User> userDup = userRepository.findOneWithAuthoritiesByLogin("badguy").blockOptional();
         assertThat(userDup).isPresent();
-        assertThat(userDup.get().getAuthorities())
+        assertThat(userDup.get().getRoles())
             .hasSize(1)
-            .containsExactly(authorityRepository.findById(AuthoritiesConstants.USER).block());
+            .containsExactly(authorityRepository.findById(2L).block());
     }
 
     @Test
@@ -496,7 +514,9 @@ class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
+        userDTO.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -515,7 +535,7 @@ class AccountResourceIT {
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(updatedUser.getImageUrl()).isEqualTo(userDTO.getImageUrl());
         assertThat(updatedUser.isActivated()).isTrue();
-        assertThat(updatedUser.getAuthorities()).isEmpty();
+        assertThat(updatedUser.getRoles()).isEmpty();
     }
 
     @Test
@@ -538,7 +558,9 @@ class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
+        userDTO.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -580,7 +602,9 @@ class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
+        userDTO.setAuthorities(authorities);
 
         accountWebTestClient
             .post()
@@ -614,7 +638,9 @@ class AccountResourceIT {
         userDTO.setActivated(false);
         userDTO.setImageUrl("http://placehold.it/50x50");
         userDTO.setLangKey(Constants.DEFAULT_LANGUAGE);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        Set<Role> authorities = new HashSet<>();
+        authorities.add(new Role(1L));
+        userDTO.setAuthorities(authorities);
 
         accountWebTestClient
             .post()

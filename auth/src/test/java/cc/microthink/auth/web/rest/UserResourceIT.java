@@ -3,9 +3,11 @@ package cc.microthink.auth.web.rest;
 import cc.microthink.auth.IntegrationTest;
 import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.EntityManager;
+import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
 import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.service.dto.AdminUserDTO;
@@ -26,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,7 +67,7 @@ class UserResourceIT {
     private UserRepository userRepository;
 
     @Autowired
-    private AuthorityRepository authorityRepository;
+    private RoleRepository authorityRepository;
 
     @Autowired
     private UserMapper userMapper;
@@ -140,7 +143,9 @@ class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         webTestClient
             .post()
@@ -178,7 +183,9 @@ class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         webTestClient
@@ -209,7 +216,9 @@ class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         // Create the User
         webTestClient
@@ -240,7 +249,9 @@ class UserResourceIT {
         managedUserVM.setActivated(true);
         managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
         managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         // Create the User
         webTestClient
@@ -261,8 +272,8 @@ class UserResourceIT {
         // Initialize the database
         userRepository.save(user).block();
         authorityRepository
-            .findById(AuthoritiesConstants.USER)
-            .flatMap(authority -> userRepository.saveUserAuthority(user.getId(), authority.getName()))
+            .findById(2L)
+            .flatMap(authority -> userRepository.saveUserAuthority(user.getId(), authority.getId()))
             .block();
 
         // Get all the users
@@ -285,7 +296,7 @@ class UserResourceIT {
         assertThat(foundUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(foundUser.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
         assertThat(foundUser.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
-        assertThat(foundUser.getAuthorities()).containsExactly(AuthoritiesConstants.USER);
+        assertThat(foundUser.getAuthorities().stream().map(r -> r.getId()).collect(Collectors.toList())).containsExactly(2L);
     }
 
     @Test
@@ -293,8 +304,8 @@ class UserResourceIT {
         // Initialize the database
         userRepository.save(user).block();
         authorityRepository
-            .findById(AuthoritiesConstants.USER)
-            .flatMap(authority -> userRepository.saveUserAuthority(user.getId(), authority.getName()))
+            .findById(2L)
+            .flatMap(authority -> userRepository.saveUserAuthority(user.getId(), authority.getId()))
             .block();
 
         // Get the user
@@ -351,7 +362,9 @@ class UserResourceIT {
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
         managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         webTestClient
             .put()
@@ -397,7 +410,9 @@ class UserResourceIT {
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
         managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         webTestClient
             .put()
@@ -455,7 +470,9 @@ class UserResourceIT {
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
         managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         webTestClient
             .put()
@@ -501,7 +518,9 @@ class UserResourceIT {
         managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
         managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
         managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        managedUserVM.setAuthorities(roleSet);
 
         webTestClient
             .put()
@@ -559,7 +578,9 @@ class UserResourceIT {
         userDTO.setLangKey(DEFAULT_LANGKEY);
         userDTO.setCreatedBy(DEFAULT_LOGIN);
         userDTO.setLastModifiedBy(DEFAULT_LOGIN);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(new Role(2L));
+        userDTO.setAuthorities(roleSet);
 
         User user = userMapper.userDTOToUser(userDTO);
         assertThat(user.getId()).isEqualTo(DEFAULT_ID);
@@ -574,7 +595,7 @@ class UserResourceIT {
         assertThat(user.getCreatedDate()).isNotNull();
         assertThat(user.getLastModifiedBy()).isNull();
         assertThat(user.getLastModifiedDate()).isNotNull();
-        assertThat(user.getAuthorities()).extracting("name").containsExactly(AuthoritiesConstants.USER);
+        assertThat(user.getRoles()).extracting("name").containsExactly(AuthoritiesConstants.USER);
     }
 
     @Test
@@ -584,11 +605,12 @@ class UserResourceIT {
         user.setCreatedDate(Instant.now());
         user.setLastModifiedBy(DEFAULT_LOGIN);
         user.setLastModifiedDate(Instant.now());
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority = new Authority();
+        Set<Role> authorities = new HashSet<>();
+        Role authority = new Role();
+        authority.setId(2L);
         authority.setName(AuthoritiesConstants.USER);
         authorities.add(authority);
-        user.setAuthorities(authorities);
+        user.setRoles(authorities);
 
         AdminUserDTO userDTO = userMapper.userToAdminUserDTO(user);
 
@@ -604,7 +626,7 @@ class UserResourceIT {
         assertThat(userDTO.getCreatedDate()).isEqualTo(user.getCreatedDate());
         assertThat(userDTO.getLastModifiedBy()).isEqualTo(DEFAULT_LOGIN);
         assertThat(userDTO.getLastModifiedDate()).isEqualTo(user.getLastModifiedDate());
-        assertThat(userDTO.getAuthorities()).containsExactly(AuthoritiesConstants.USER);
+        assertThat(userDTO.getAuthorities().stream().map(role -> role.getId()).collect(Collectors.toList())).containsExactly(2L);
         assertThat(userDTO.toString()).isNotNull();
     }
 

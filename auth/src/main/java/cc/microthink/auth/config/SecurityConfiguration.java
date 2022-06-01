@@ -61,22 +61,6 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public MapReactiveUserDetailsService userDetailsService(SecurityProperties properties) {
-//        SecurityProperties.User user = properties.getUser();
-//        UserDetails userDetails = User
-//            .withUsername(user.getName())
-//            .password("{noop}" + user.getPassword())
-//            .roles(StringUtils.toStringArray(user.getRoles()))
-//            .build();
-//        return new MapReactiveUserDetailsService(userDetails);
-//    }
-
-//    @Bean
-//    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService) {
-//        return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
-//    }
-
     @Bean
     public ReactiveAuthenticationManager reactiveAuthenticationManager() {
         UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(

@@ -1,6 +1,7 @@
 package cc.microthink.auth.repository;
 
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import org.apache.commons.beanutils.BeanComparator;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
@@ -45,13 +47,13 @@ public interface UserRepository extends R2dbcRepository<User, Long>, UserReposit
 
     Mono<Long> count();
 
-    @Query("INSERT INTO au_user_authority VALUES(:userId, :authority)")
-    Mono<Void> saveUserAuthority(Long userId, String authority);
+    @Query("INSERT INTO au_user_role VALUES(:userId, :authority)")
+    Mono<Void> saveUserAuthority(Long userId, Long authority);
 
-    @Query("DELETE FROM au_user_authority")
+    @Query("DELETE FROM au_user_role")
     Mono<Void> deleteAllUserAuthorities();
 
-    @Query("DELETE FROM au_user_authority WHERE user_id = :userId")
+    @Query("DELETE FROM au_user_role WHERE user_id = :userId")
     Mono<Void> deleteUserAuthorities(Long userId);
 }
 
@@ -99,9 +101,9 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
         long size = pageable.getPageSize();
 
         return db
-            .sql("SELECT * FROM au_user u LEFT JOIN au_user_authority ua ON u.id=ua.user_id")
+            .sql("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN role r ON ua.role_id = r.id")
             .map((row, metadata) ->
-                Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("authority_name", String.class)))
+                Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("role_id", Long.class)), Optional.ofNullable(row.get("role_name", String.class)))
             )
             .all()
             .groupBy(t -> t.getT1().getLogin())
@@ -118,18 +120,31 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
     @Override
     public Mono<Void> delete(User user) {
         return db
-            .sql("DELETE FROM au_user_authority WHERE user_id = :userId")
+            .sql("DELETE FROM au_user_role WHERE user_id = :userId")
             .bind("userId", user.getId())
             .then()
             .then(r2dbcEntityTemplate.delete(User.class).matching(query(where("id").is(user.getId()))).all().then());
     }
 
+//    private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {
+//        return db
+//            .sql("SELECT * FROM au_user u LEFT JOIN au_user_authority ua ON u.id=ua.user_id WHERE u." + fieldName + " = :" + fieldName)
+//            .bind(fieldName, fieldValue)
+//            .map((row, metadata) ->
+//                Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("authority_name", String.class)))
+//            )
+//            .all()
+//            .collectList()
+//            .filter(l -> !l.isEmpty())
+//            .map(l -> updateUserWithAuthorities(l.get(0).getT1(), l));
+//    }
+
     private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {
-        return db
-            .sql("SELECT * FROM au_user u LEFT JOIN au_user_authority ua ON u.id=ua.user_id WHERE u." + fieldName + " = :" + fieldName)
+        String sql = String.format("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN role r ON ua.role_id = r.id WHERE u.%s = :%s", fieldName, fieldName);
+        return db.sql(sql)
             .bind(fieldName, fieldValue)
             .map((row, metadata) ->
-                Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("authority_name", String.class)))
+                Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("role_id", Long.class)), Optional.ofNullable(row.get("role_name", String.class)))
             )
             .all()
             .collectList()
@@ -137,15 +152,32 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
             .map(l -> updateUserWithAuthorities(l.get(0).getT1(), l));
     }
 
-    private User updateUserWithAuthorities(User user, List<Tuple2<User, Optional<String>>> tuples) {
-        user.setAuthorities(
+//    private User updateUserWithAuthorities(User user, List<Tuple2<User, Optional<String>>> tuples) {
+//        user.setAuthorities(
+//            tuples
+//                .stream()
+//                .filter(t -> t.getT2().isPresent())
+//                .map(t -> {
+//                    Authority authority = new Authority();
+//                    authority.setName(t.getT2().get());
+//                    return authority;
+//                })
+//                .collect(Collectors.toSet())
+//        );
+//
+//        return user;
+//    }
+
+    private User updateUserWithAuthorities(User user, List<Tuple3<User, Optional<Long>, Optional<String>>> tuples) {
+        user.setRoles(
             tuples
                 .stream()
                 .filter(t -> t.getT2().isPresent())
                 .map(t -> {
-                    Authority authority = new Authority();
-                    authority.setName(t.getT2().get());
-                    return authority;
+                    Role role = new Role();
+                    role.setId(t.getT2().get());
+                    role.setName(t.getT3().get());
+                    return role;
                 })
                 .collect(Collectors.toSet())
         );

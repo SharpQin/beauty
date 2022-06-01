@@ -55,8 +55,9 @@ public class DomainUserDetailsService implements ReactiveUserDetailsService {
         if (!user.isActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
+        //TODO need change more
         List<GrantedAuthority> grantedAuthorities = user
-            .getAuthorities()
+            .getRoles()
             .stream()
             .map(authority -> new SimpleGrantedAuthority(authority.getName()))
             .collect(Collectors.toList());
