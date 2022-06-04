@@ -24,6 +24,7 @@
 
     <properties>
         <!-- Build properties -->
+        <micrithink-common.version>0.1.0-SNAPSHOT</micrithink-common.version>
         <maven.version>3.8.5</maven.version>
         <java.version>11</java.version>
 
@@ -358,6 +359,27 @@
             <scope>provided</scope>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cc.microthink</groupId>
+            <artifactId>common</artifactId>
+            <version>${micrithink-common.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

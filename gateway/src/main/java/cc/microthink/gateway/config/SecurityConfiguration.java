@@ -3,21 +3,17 @@ package cc.microthink.gateway.config;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 import cc.microthink.gateway.security.AuthoritiesConstants;
+import cc.microthink.gateway.security.AuthoritiesFilter;
 import cc.microthink.gateway.security.jwt.JWTFilter;
 import cc.microthink.gateway.security.jwt.TokenProvider;
-import cc.microthink.gateway.web.filter.SpaWebFilter;
+import cc.microthink.gateway.service.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
@@ -39,16 +35,20 @@ public class SecurityConfiguration {
 
     private final SecurityProblemSupport problemSupport;
 
+    private final RedisService redisService;
+
     public SecurityConfiguration(
 //        ReactiveUserDetailsService userDetailsService,
         TokenProvider tokenProvider,
         JHipsterProperties jHipsterProperties,
-        SecurityProblemSupport problemSupport
+        SecurityProblemSupport problemSupport,
+        RedisService redisService
     ) {
 //        this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
         this.jHipsterProperties = jHipsterProperties;
         this.problemSupport = problemSupport;
+        this.redisService = redisService;
     }
 
 //    @Bean
@@ -77,6 +77,7 @@ public class SecurityConfiguration {
                 .disable()
 //            .addFilterAt(new SpaWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)         //TODO remove the SpaWebFilter
             .addFilterAt(new JWTFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+            .addFilterAt(new AuthoritiesFilter(redisService), SecurityWebFiltersOrder.AUTHORIZATION)
 //            .authenticationManager(reactiveAuthenticationManager())                          //TODO remove authenticationManager to microservice auth
             .exceptionHandling()
                 .accessDeniedHandler(problemSupport)
