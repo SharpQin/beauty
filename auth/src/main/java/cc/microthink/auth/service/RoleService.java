@@ -33,6 +33,7 @@ public class RoleService {
      */
     public Mono<Role> save(Role role) {
         log.debug("Request to save Role : {}", role);
+
         return roleRepository.save(role);
     }
 

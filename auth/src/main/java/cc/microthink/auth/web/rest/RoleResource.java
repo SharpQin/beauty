@@ -186,8 +186,9 @@ public class RoleResource {
         return roleService
             .countAll()
             .zipWith(roleService.findAll(pageable).collectList())
-            .map(countWithEntities ->
-                ResponseEntity
+            .map(countWithEntities -> {
+                log.info("getAllRoles: countWithEntities:{}", countWithEntities);
+                return ResponseEntity
                     .ok()
                     .headers(
                         PaginationUtil.generatePaginationHttpHeaders(
@@ -195,8 +196,8 @@ public class RoleResource {
                             new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
                         )
                     )
-                    .body(countWithEntities.getT2())
-            );
+                    .body(countWithEntities.getT2());
+            });
     }
 
     /**

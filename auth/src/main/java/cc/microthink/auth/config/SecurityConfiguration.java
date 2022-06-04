@@ -3,6 +3,7 @@ package cc.microthink.auth.config;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 import cc.microthink.auth.security.AuthoritiesConstants;
+import cc.microthink.auth.security.AuthoritiesFilter;
 import cc.microthink.auth.security.jwt.JWTFilter;
 import cc.microthink.auth.security.jwt.TokenProvider;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
@@ -81,6 +83,7 @@ public class SecurityConfiguration {
             .csrf()
                 .disable()
             .addFilterAt(new JWTFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+            .addFilterAt(new AuthoritiesFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
             .authenticationManager(reactiveAuthenticationManager())    //TODO note: check?
             .exceptionHandling()
                 .accessDeniedHandler(problemSupport)

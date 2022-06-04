@@ -29,17 +29,17 @@ public class Menu implements Serializable {
     @Column("title")
     private String title;
 
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @Size(max = 60)
     @Column("link")
     private String link;
 
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @Size(max = 10)
     @Column("method")
     private String method;
 
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @Size(max = 30)
     @Column("auth_key")
     private String authKey;
