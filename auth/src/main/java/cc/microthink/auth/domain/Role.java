@@ -33,6 +33,7 @@ public class Role implements Serializable {
     /**
      * Authority Split by comma: e.g. auth:do1,auth:do2
      */
+    @Size(max = 2048)
     @Column("authorities")
     private String authorities;
 

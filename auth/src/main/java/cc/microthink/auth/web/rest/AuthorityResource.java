@@ -1,56 +1,50 @@
 package cc.microthink.auth.web.rest;
 
-import cc.microthink.auth.domain.Menu;
-import cc.microthink.auth.repository.MenuRepository;
-import cc.microthink.auth.service.MenuService;
+import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.repository.AuthorityRepository;
+import cc.microthink.auth.service.AuthorityService;
 import cc.microthink.auth.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.reactive.ResponseUtil;
 
 /**
- * REST controller for managing {@link cc.microthink.auth.domain.Menu}.
+ * REST controller for managing {@link Authority}.
  */
 @RestController
 @RequestMapping("/api")
-public class MenuResource {
+public class AuthorityResource {
 
-    private final Logger log = LoggerFactory.getLogger(MenuResource.class);
+    private final Logger log = LoggerFactory.getLogger(AuthorityResource.class);
 
-    private static final String ENTITY_NAME = "authMenu";
+    private static final String ENTITY_NAME = "Authority";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final MenuService menuService;
+    private final AuthorityService menuService;
 
-    private final MenuRepository menuRepository;
+    private final AuthorityRepository menuRepository;
 
-    public MenuResource(MenuService menuService, MenuRepository menuRepository) {
+    public AuthorityResource(AuthorityService menuService, AuthorityRepository menuRepository) {
         this.menuService = menuService;
         this.menuRepository = menuRepository;
     }
@@ -63,7 +57,7 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/menus")
-    public Mono<ResponseEntity<Menu>> createMenu(@Valid @RequestBody Menu menu) throws URISyntaxException {
+    public Mono<ResponseEntity<Authority>> createMenu(@Valid @RequestBody Authority menu) throws URISyntaxException {
         log.debug("REST request to save Menu : {}", menu);
         if (menu.getId() != null) {
             throw new BadRequestAlertException("A new menu cannot already have an ID", ENTITY_NAME, "idexists");
@@ -93,9 +87,9 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/menus/{id}")
-    public Mono<ResponseEntity<Menu>> updateMenu(
+    public Mono<ResponseEntity<Authority>> updateMenu(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Menu menu
+        @Valid @RequestBody Authority menu
     ) throws URISyntaxException {
         log.debug("REST request to update Menu : {}, {}", id, menu);
         if (menu.getId() == null) {
@@ -136,9 +130,9 @@ public class MenuResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/menus/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<Menu>> partialUpdateMenu(
+    public Mono<ResponseEntity<Authority>> partialUpdateMenu(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Menu menu
+        @NotNull @RequestBody Authority menu
     ) throws URISyntaxException {
         log.debug("REST request to partial update Menu partially : {}, {}", id, menu);
         if (menu.getId() == null) {
@@ -155,7 +149,7 @@ public class MenuResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<Menu> result = menuService.partialUpdate(menu);
+                Mono<Authority> result = menuService.partialUpdate(menu);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -176,7 +170,7 @@ public class MenuResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of menus in body.
      */
     @GetMapping("/menus")
-    public Mono<ResponseEntity<List<Menu>>> getAllMenus(
+    public Mono<ResponseEntity<List<Authority>>> getAllMenus(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request
     ) {
@@ -204,9 +198,9 @@ public class MenuResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the menu, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/menus/{id}")
-    public Mono<ResponseEntity<Menu>> getMenu(@PathVariable Long id) {
+    public Mono<ResponseEntity<Authority>> getMenu(@PathVariable Long id) {
         log.debug("REST request to get Menu : {}", id);
-        Mono<Menu> menu = menuService.findOne(id);
+        Mono<Authority> menu = menuService.findOne(id);
         return ResponseUtil.wrapOrNotFound(menu);
     }
 

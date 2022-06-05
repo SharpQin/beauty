@@ -2,16 +2,16 @@ package cc.microthink.auth.domain;
 
 import java.io.Serializable;
 import javax.validation.constraints.*;
+
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * A Menu.
  */
-@Table("menu")
-public class Menu implements Serializable {
+@Table("au_authority")
+public class Authority implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,17 +29,17 @@ public class Menu implements Serializable {
     @Column("title")
     private String title;
 
-//    @NotNull(message = "must not be null")
+    //    @NotNull(message = "must not be null")
     @Size(max = 60)
     @Column("link")
     private String link;
 
-//    @NotNull(message = "must not be null")
+    //    @NotNull(message = "must not be null")
     @Size(max = 10)
     @Column("method")
     private String method;
 
-//    @NotNull(message = "must not be null")
+    //    @NotNull(message = "must not be null")
     @Size(max = 30)
     @Column("auth_key")
     private String authKey;
@@ -56,7 +56,7 @@ public class Menu implements Serializable {
         return this.id;
     }
 
-    public Menu id(Long id) {
+    public Authority id(Long id) {
         this.setId(id);
         return this;
     }
@@ -69,7 +69,7 @@ public class Menu implements Serializable {
         return this.name;
     }
 
-    public Menu name(String name) {
+    public Authority name(String name) {
         this.setName(name);
         return this;
     }
@@ -82,7 +82,7 @@ public class Menu implements Serializable {
         return this.title;
     }
 
-    public Menu title(String title) {
+    public Authority title(String title) {
         this.setTitle(title);
         return this;
     }
@@ -95,7 +95,7 @@ public class Menu implements Serializable {
         return this.link;
     }
 
-    public Menu link(String link) {
+    public Authority link(String link) {
         this.setLink(link);
         return this;
     }
@@ -108,7 +108,7 @@ public class Menu implements Serializable {
         return this.method;
     }
 
-    public Menu method(String method) {
+    public Authority method(String method) {
         this.setMethod(method);
         return this;
     }
@@ -121,7 +121,7 @@ public class Menu implements Serializable {
         return this.authKey;
     }
 
-    public Menu authKey(String authKey) {
+    public Authority authKey(String authKey) {
         this.setAuthKey(authKey);
         return this;
     }
@@ -134,7 +134,7 @@ public class Menu implements Serializable {
         return this.showed;
     }
 
-    public Menu showed(Boolean showed) {
+    public Authority showed(Boolean showed) {
         this.setShowed(showed);
         return this;
     }
@@ -147,7 +147,7 @@ public class Menu implements Serializable {
         return this.parent;
     }
 
-    public Menu parent(Long parent) {
+    public Authority parent(Long parent) {
         this.setParent(parent);
         return this;
     }
@@ -163,10 +163,10 @@ public class Menu implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Menu)) {
+        if (!(o instanceof Authority)) {
             return false;
         }
-        return id != null && id.equals(((Menu) o).id);
+        return id != null && id.equals(((Authority) o).id);
     }
 
     @Override

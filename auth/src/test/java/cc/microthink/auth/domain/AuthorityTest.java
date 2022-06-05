@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import cc.microthink.auth.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
-class MenuTest {
+class AuthorityTest {
 
     @Test
     void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Menu.class);
-        Menu menu1 = new Menu();
+        TestUtil.equalsVerifier(Authority.class);
+        Authority menu1 = new Authority();
         menu1.setId(1L);
-        Menu menu2 = new Menu();
+        Authority menu2 = new Authority();
         menu2.setId(menu1.getId());
         assertThat(menu1).isEqualTo(menu2);
         menu2.setId(2L);

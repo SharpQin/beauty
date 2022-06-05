@@ -99,7 +99,7 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
         long size = pageable.getPageSize();
 
         return db
-            .sql("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN role r ON ua.role_id = r.id")
+            .sql("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN au_role r ON ua.role_id = r.id")
             .map((row, metadata) ->
                 Tuples.of(r2dbcConverter.read(User.class, row, metadata), Optional.ofNullable(row.get("role_id", Long.class)), Optional.ofNullable(row.get("role_name", String.class)))
             )
@@ -138,7 +138,7 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
 //    }
 
     private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {
-        String sql = String.format("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN role r ON ua.role_id = r.id WHERE u.%s = :%s", fieldName, fieldName);
+        String sql = String.format("SELECT u.*, r.id AS role_id, r.name AS role_name FROM au_user u LEFT JOIN au_user_role ua ON u.id=ua.user_id LEFT JOIN au_role r ON ua.role_id = r.id WHERE u.%s = :%s", fieldName, fieldName);
         return db.sql(sql)
             .bind(fieldName, fieldValue)
             .map((row, metadata) ->

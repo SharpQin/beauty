@@ -5,19 +5,16 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 import cc.microthink.auth.IntegrationTest;
-import cc.microthink.auth.domain.Menu;
+import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.repository.EntityManager;
-import cc.microthink.auth.repository.MenuRepository;
-import java.time.Duration;
+import cc.microthink.auth.repository.AuthorityRepository;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
@@ -25,12 +22,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
- * Integration tests for the {@link MenuResource} REST controller.
+ * Integration tests for the {@link AuthorityResource} REST controller.
  */
 @IntegrationTest
 @AutoConfigureWebTestClient(timeout = IntegrationTest.DEFAULT_ENTITY_TIMEOUT)
 @WithMockUser
-class MenuResourceIT {
+class AuthorityResourceIT {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
@@ -60,7 +57,7 @@ class MenuResourceIT {
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
-    private MenuRepository menuRepository;
+    private AuthorityRepository menuRepository;
 
     @Autowired
     private EntityManager em;
@@ -68,7 +65,7 @@ class MenuResourceIT {
     @Autowired
     private WebTestClient webTestClient;
 
-    private Menu menu;
+    private Authority menu;
 
     /**
      * Create an entity for this test.
@@ -76,8 +73,8 @@ class MenuResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Menu createEntity(EntityManager em) {
-        Menu menu = new Menu()
+    public static Authority createEntity(EntityManager em) {
+        Authority menu = new Authority()
             .name(DEFAULT_NAME)
             .title(DEFAULT_TITLE)
             .link(DEFAULT_LINK)
@@ -94,8 +91,8 @@ class MenuResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Menu createUpdatedEntity(EntityManager em) {
-        Menu menu = new Menu()
+    public static Authority createUpdatedEntity(EntityManager em) {
+        Authority menu = new Authority()
             .name(UPDATED_NAME)
             .title(UPDATED_TITLE)
             .link(UPDATED_LINK)
@@ -108,7 +105,7 @@ class MenuResourceIT {
 
     public static void deleteEntities(EntityManager em) {
         try {
-            em.deleteAll(Menu.class).block();
+            em.deleteAll(Authority.class).block();
         } catch (Exception e) {
             // It can fail, if other entities are still referring this - it will be removed later.
         }
@@ -139,9 +136,9 @@ class MenuResourceIT {
             .isCreated();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeCreate + 1);
-        Menu testMenu = menuList.get(menuList.size() - 1);
+        Authority testMenu = menuList.get(menuList.size() - 1);
         assertThat(testMenu.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testMenu.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testMenu.getLink()).isEqualTo(DEFAULT_LINK);
@@ -169,7 +166,7 @@ class MenuResourceIT {
             .isBadRequest();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeCreate);
     }
 
@@ -190,7 +187,7 @@ class MenuResourceIT {
             .expectStatus()
             .isBadRequest();
 
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -211,7 +208,7 @@ class MenuResourceIT {
             .expectStatus()
             .isBadRequest();
 
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -232,7 +229,7 @@ class MenuResourceIT {
             .expectStatus()
             .isBadRequest();
 
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -253,7 +250,7 @@ class MenuResourceIT {
             .expectStatus()
             .isBadRequest();
 
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -274,7 +271,7 @@ class MenuResourceIT {
             .expectStatus()
             .isBadRequest();
 
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeTest);
     }
 
@@ -366,7 +363,7 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().collectList().block().size();
 
         // Update the menu
-        Menu updatedMenu = menuRepository.findById(menu.getId()).block();
+        Authority updatedMenu = menuRepository.findById(menu.getId()).block();
         updatedMenu
             .name(UPDATED_NAME)
             .title(UPDATED_TITLE)
@@ -386,9 +383,9 @@ class MenuResourceIT {
             .isOk();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
-        Menu testMenu = menuList.get(menuList.size() - 1);
+        Authority testMenu = menuList.get(menuList.size() - 1);
         assertThat(testMenu.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMenu.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testMenu.getLink()).isEqualTo(UPDATED_LINK);
@@ -414,7 +411,7 @@ class MenuResourceIT {
             .isBadRequest();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -434,7 +431,7 @@ class MenuResourceIT {
             .isBadRequest();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -454,7 +451,7 @@ class MenuResourceIT {
             .isEqualTo(405);
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -466,7 +463,7 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().collectList().block().size();
 
         // Update the menu using partial update
-        Menu partialUpdatedMenu = new Menu();
+        Authority partialUpdatedMenu = new Authority();
         partialUpdatedMenu.setId(menu.getId());
 
         partialUpdatedMenu.method(UPDATED_METHOD);
@@ -481,9 +478,9 @@ class MenuResourceIT {
             .isOk();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
-        Menu testMenu = menuList.get(menuList.size() - 1);
+        Authority testMenu = menuList.get(menuList.size() - 1);
         assertThat(testMenu.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testMenu.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testMenu.getLink()).isEqualTo(DEFAULT_LINK);
@@ -501,7 +498,7 @@ class MenuResourceIT {
         int databaseSizeBeforeUpdate = menuRepository.findAll().collectList().block().size();
 
         // Update the menu using partial update
-        Menu partialUpdatedMenu = new Menu();
+        Authority partialUpdatedMenu = new Authority();
         partialUpdatedMenu.setId(menu.getId());
 
         partialUpdatedMenu
@@ -523,9 +520,9 @@ class MenuResourceIT {
             .isOk();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
-        Menu testMenu = menuList.get(menuList.size() - 1);
+        Authority testMenu = menuList.get(menuList.size() - 1);
         assertThat(testMenu.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMenu.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testMenu.getLink()).isEqualTo(UPDATED_LINK);
@@ -551,7 +548,7 @@ class MenuResourceIT {
             .isBadRequest();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -571,7 +568,7 @@ class MenuResourceIT {
             .isBadRequest();
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -591,7 +588,7 @@ class MenuResourceIT {
             .isEqualTo(405);
 
         // Validate the Menu in the database
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeUpdate);
     }
 
@@ -612,7 +609,7 @@ class MenuResourceIT {
             .isNoContent();
 
         // Validate the database contains one less item
-        List<Menu> menuList = menuRepository.findAll().collectList().block();
+        List<Authority> menuList = menuRepository.findAll().collectList().block();
         assertThat(menuList).hasSize(databaseSizeBeforeDelete - 1);
     }
 }

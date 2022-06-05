@@ -1,8 +1,8 @@
 package cc.microthink.auth.config;
 
-import cc.microthink.auth.domain.Menu;
+import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
-import cc.microthink.auth.repository.MenuRepository;
+import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.service.RedisService;
 import cc.microthink.common.dto.MenuDTO;
@@ -23,9 +23,9 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
 
     private final RoleRepository roleRepository;
 
-    private final MenuRepository menuRepository;
+    private final AuthorityRepository menuRepository;
 
-    public ApplicationStartup(RedisService redisService, RoleRepository roleRepository, MenuRepository menuRepository) {
+    public ApplicationStartup(RedisService redisService, RoleRepository roleRepository, AuthorityRepository menuRepository) {
         this.redisService = redisService;
         this.roleRepository = roleRepository;
         this.menuRepository = menuRepository;
@@ -34,17 +34,17 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
 
-        Flux<Role> roleFlux = roleRepository.findAllWithEagerRelationships();
-        roleFlux.subscribe(role -> {
-            redisService.saveRolePermissions(role);
-        });
-
-        Flux<Menu> menuFlux = menuRepository.findAll();
-        menuFlux
-            .filter(m -> StringUtils.isNotBlank(m.getAuthKey()))
-            .map(menu -> new MenuDTO(menu.getLink(), menu.getMethod(), menu.getAuthKey()))
-            .collectList()
-            .subscribe(list -> redisService.saveAllMenu(list));
+//        Flux<Role> roleFlux = roleRepository.findAllWithEagerRelationships();
+//        roleFlux.subscribe(role -> {
+//            redisService.saveRolePermissions(role);
+//        });
+//
+//        Flux<Authority> menuFlux = menuRepository.findAll();
+//        menuFlux
+//            .filter(m -> StringUtils.isNotBlank(m.getAuthKey()))
+//            .map(menu -> new MenuDTO(menu.getLink(), menu.getMethod(), menu.getAuthKey()))
+//            .collectList()
+//            .subscribe(list -> redisService.saveAllMenu(list));
 
     }
 }
