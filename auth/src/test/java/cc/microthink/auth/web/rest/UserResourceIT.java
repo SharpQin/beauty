@@ -2,10 +2,8 @@ package cc.microthink.auth.web.rest;
 
 import cc.microthink.auth.IntegrationTest;
 import cc.microthink.auth.config.Constants;
-import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
-import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.EntityManager;
 import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
@@ -23,7 +21,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -632,22 +629,7 @@ class UserResourceIT {
 
     @Test
     void testAuthorityEquals() {
-        Authority authorityA = new Authority();
-        assertThat(authorityA).isNotEqualTo(null).isNotEqualTo(new Object());
-        assertThat(authorityA.hashCode()).isZero();
-        assertThat(authorityA.toString()).isNotNull();
 
-        Authority authorityB = new Authority();
-        assertThat(authorityA).isEqualTo(authorityB);
-
-        authorityB.setName(AuthoritiesConstants.ADMIN);
-        assertThat(authorityA).isNotEqualTo(authorityB);
-
-        authorityA.setName(AuthoritiesConstants.USER);
-        assertThat(authorityA).isNotEqualTo(authorityB);
-
-        authorityB.setName(AuthoritiesConstants.USER);
-        assertThat(authorityA).isEqualTo(authorityB).hasSameHashCodeAs(authorityB);
     }
 
     private void assertPersistedUsers(Consumer<List<User>> userAssertion) {

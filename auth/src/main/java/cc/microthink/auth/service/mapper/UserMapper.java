@@ -1,6 +1,5 @@
 package cc.microthink.auth.service.mapper;
 
-import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.service.dto.AdminUserDTO;

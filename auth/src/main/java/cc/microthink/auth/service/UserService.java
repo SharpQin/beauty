@@ -1,13 +1,10 @@
 package cc.microthink.auth.service;
 
 import cc.microthink.auth.config.Constants;
-import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
-import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
-import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.security.SecurityUtils;
 import cc.microthink.auth.service.dto.AdminUserDTO;
 import cc.microthink.auth.service.dto.UserDTO;

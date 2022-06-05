@@ -1,7 +1,6 @@
 package cc.microthink.auth.service.dto;
 
 import cc.microthink.auth.config.Constants;
-import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
 
@@ -11,7 +10,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A DTO representing a user, with his authorities.

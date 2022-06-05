@@ -4,7 +4,6 @@ import cc.microthink.auth.IntegrationTest;
 import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.Role;
 import cc.microthink.auth.domain.User;
-import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.RoleRepository;
 import cc.microthink.auth.repository.UserRepository;
 import cc.microthink.auth.security.AuthoritiesConstants;
@@ -24,7 +23,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
