@@ -46,13 +46,7 @@ class RoleRepositoryInternalImpl extends SimpleR2dbcRepository<Role, Long> imple
 
     private final RoleRowMapper roleMapper;
 
-    private static final Table entityTable = Table.aliased("role", EntityManager.ENTITY_ALIAS);
-
-    private static final EntityManager.LinkTable permissionsLink = new EntityManager.LinkTable(
-        "rel_role__permissions",
-        "role_id",
-        "permissions_id"
-    );
+    private static final Table entityTable = Table.aliased("au_role", EntityManager.ENTITY_ALIAS);
 
     public RoleRepositoryInternalImpl(
         R2dbcEntityTemplate template,
@@ -114,26 +108,5 @@ class RoleRepositoryInternalImpl extends SimpleR2dbcRepository<Role, Long> imple
     private Role process(Row row, RowMetadata metadata) {
         Role entity = roleMapper.apply(row, "e");
         return entity;
-    }
-
-    @Override
-    public <S extends Role> Mono<S> save(S entity) {
-        return super.save(entity).flatMap((S e) -> updateRelations(e));
-    }
-
-    protected <S extends Role> Mono<S> updateRelations(S entity) {
-        Mono<Void> result = entityManager
-            .updateLinkTable(permissionsLink, entity.getId(), entity.getPermissions().stream().map(Permission::getId))
-            .then();
-        return result.thenReturn(entity);
-    }
-
-    @Override
-    public Mono<Void> deleteById(Long entityId) {
-        return deleteRelations(entityId).then(super.deleteById(entityId));
-    }
-
-    protected Mono<Void> deleteRelations(Long entityId) {
-        return entityManager.deleteFromLinkTable(permissionsLink, entityId);
     }
 }

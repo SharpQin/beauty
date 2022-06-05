@@ -28,13 +28,9 @@ public class RoleServiceIT {
         Flux<Role> roleFlux = roleRepository.findAllWithEagerRelationships();
         roleFlux.subscribe(role -> {
 
-            Set<Permission> permissions =  role.getPermissions();
-            permissions.forEach(permission -> {
-                System.out.println(permission.getAuthKey());
-                System.out.println("--------------");
-            });
-            System.out.println(permissions.size());
-            Assert.assertTrue(permissions.size() > 0);
+            String authorities =  role.getAuthorities();
+
+            System.out.println(authorities);
         });
     }
 

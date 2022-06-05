@@ -27,10 +27,6 @@ public class Permission implements Serializable {
     @Column("auth_key")
     private String authKey;
 
-    @Transient
-    @JsonIgnoreProperties(value = { "permissions" }, allowSetters = true)
-    private Set<Role> roles = new HashSet<>();
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -57,37 +53,6 @@ public class Permission implements Serializable {
 
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
-    }
-
-    public Set<Role> getRoles() {
-        return this.roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        if (this.roles != null) {
-            this.roles.forEach(i -> i.removePermissions(this));
-        }
-        if (roles != null) {
-            roles.forEach(i -> i.addPermissions(this));
-        }
-        this.roles = roles;
-    }
-
-    public Permission roles(Set<Role> roles) {
-        this.setRoles(roles);
-        return this;
-    }
-
-    public Permission addRoles(Role role) {
-        this.roles.add(role);
-        role.getPermissions().add(this);
-        return this;
-    }
-
-    public Permission removeRoles(Role role) {
-        this.roles.remove(role);
-        role.getPermissions().remove(this);
-        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

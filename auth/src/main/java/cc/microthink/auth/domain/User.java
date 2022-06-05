@@ -76,10 +76,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column("reset_date")
     private Instant resetDate = null;
 
-//    @JsonIgnore
-//    @Transient
-//    private Set<Authority> authorities = new HashSet<>();
-
     @JsonIgnore
     @Transient
     private Set<Role> roles = new HashSet<>();
@@ -180,14 +176,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     public void setLangKey(String langKey) {
         this.langKey = langKey;
     }
-
-//    public Set<Authority> getAuthorities() {
-//        return authorities;
-//    }
-//
-//    public void setAuthorities(Set<Authority> authorities) {
-//        this.authorities = authorities;
-//    }
 
     public Set<Role> getRoles() {
         return roles;

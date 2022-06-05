@@ -13,7 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 /**
  * A Role.
  */
-@Table("role")
+@Table("au_role")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,9 +30,11 @@ public class Role implements Serializable {
     @Column("dsc")
     private String dsc;
 
-    @Transient
-    @JsonIgnoreProperties(value = { "roles" }, allowSetters = true)
-    private Set<Permission> permissions = new HashSet<>();
+    /**
+     * Authority Split by comma: e.g. auth:do1,auth:do2
+     */
+    @Column("authorities")
+    private String authorities;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -81,29 +83,17 @@ public class Role implements Serializable {
         this.dsc = dsc;
     }
 
-    public Set<Permission> getPermissions() {
-        return this.permissions;
+    public String getAuthorities() {
+        return authorities;
     }
 
-    public void setPermissions(Set<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
-    public Role permissions(Set<Permission> permissions) {
-        this.setPermissions(permissions);
+    public Role authorities(String authorities) {
+        this.setAuthorities(authorities);
         return this;
     }
 
-    public Role addPermissions(Permission permission) {
-        this.permissions.add(permission);
-        permission.getRoles().add(this);
-        return this;
-    }
-
-    public Role removePermissions(Permission permission) {
-        this.permissions.remove(permission);
-        permission.getRoles().remove(this);
-        return this;
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -132,6 +122,7 @@ public class Role implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", dsc='" + getDsc() + "'" +
+            ", authorities='" + getAuthorities() + "'" +
             "}";
     }
 }

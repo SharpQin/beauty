@@ -63,6 +63,9 @@ public class RoleService {
                 if (role.getName() != null) {
                     existingRole.setName(role.getName());
                 }
+                if (role.getAuthorities() != null) {
+                    existingRole.setAuthorities(role.getAuthorities());
+                }
                 if (role.getDsc() != null) {
                     existingRole.setDsc(role.getDsc());
                 }

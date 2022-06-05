@@ -30,10 +30,7 @@ public class RedisService {
 
         logger.info("saveRolePermissions: redis key:{}", "RSHARED_" + role.getName());
         RSet<String> permissionSet = redissonClient.getSet(role.getName());
-        role.getPermissions().forEach(permission -> {
-            permissionSet.add(permission.getAuthKey());
-            logger.info("saveRolePermissions: add permission auth key:{}", permission.getAuthKey());
-        });
+
     }
 
     public RSet<String> getRolePermissions(String roleName) {

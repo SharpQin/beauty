@@ -10,7 +10,7 @@
         Added the entity Role.
     -->
     <changeSet id="20220528091224-1" author="jhipster">
-        <createTable tableName="role">
+        <createTable tableName="au_role">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -22,20 +22,6 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-    </changeSet>
-
-    <changeSet id="20220528091224-1-relations" author="jhipster">
-
-        <createTable tableName="rel_role__permissions">
-            <column name="permissions_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="role_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="role_id, permissions_id" tableName="rel_role__permissions"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -52,7 +38,7 @@
         <loadData
                   file="config/liquibase/fake-data/role.csv"
                   separator=";"
-                  tableName="role"
+                  tableName="au_role"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="name" type="string"/>

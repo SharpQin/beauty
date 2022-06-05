@@ -78,9 +78,7 @@ class RoleResourceIT {
     public static Role createEntity(EntityManager em) {
         Role role = new Role().name(DEFAULT_NAME).dsc(DEFAULT_DSC);
         // Add required entity
-        Permission permission;
-        permission = em.insert(PermissionResourceIT.createEntity(em)).block();
-        role.getPermissions().add(permission);
+        //TODO Authorities
         return role;
     }
 
@@ -93,9 +91,6 @@ class RoleResourceIT {
     public static Role createUpdatedEntity(EntityManager em) {
         Role role = new Role().name(UPDATED_NAME).dsc(UPDATED_DSC);
         // Add required entity
-        Permission permission;
-        permission = em.insert(PermissionResourceIT.createUpdatedEntity(em)).block();
-        role.getPermissions().add(permission);
         return role;
     }
 

@@ -26,11 +26,6 @@ public interface RoleRepository extends ReactiveCrudRepository<Role, Long>, Role
     @Override
     Flux<Role> findAllWithEagerRelationships(Pageable page);
 
-    @Query(
-        "SELECT entity.* FROM role entity JOIN rel_role__permissions joinTable ON entity.id = joinTable.permissions_id WHERE joinTable.permissions_id = :id"
-    )
-    Flux<Role> findByPermissions(Long id);
-
     @Override
     <S extends Role> Mono<S> save(S entity);
 
