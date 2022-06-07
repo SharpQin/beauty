@@ -26,6 +26,7 @@ public class RoleRowMapper implements BiFunction<Row, String, Role> {
         Role entity = new Role();
         entity.setId(converter.fromRow(row, prefix + "_id", Long.class));
         entity.setName(converter.fromRow(row, prefix + "_name", String.class));
+        entity.setAuthorities(converter.fromRow(row, prefix + "_authorities", String.class));
         entity.setDsc(converter.fromRow(row, prefix + "_dsc", String.class));
         return entity;
     }

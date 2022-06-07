@@ -12,6 +12,7 @@ public class RoleSqlHelper {
         List<Expression> columns = new ArrayList<>();
         columns.add(Column.aliased("id", table, columnPrefix + "_id"));
         columns.add(Column.aliased("name", table, columnPrefix + "_name"));
+        columns.add(Column.aliased("authorities", table, columnPrefix + "_authorities"));
         columns.add(Column.aliased("dsc", table, columnPrefix + "_dsc"));
 
         return columns;

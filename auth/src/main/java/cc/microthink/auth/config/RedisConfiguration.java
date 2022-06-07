@@ -28,7 +28,10 @@ public class RedisConfiguration {
         Config config = new Config();
         Codec codec = JsonJacksonCodec.INSTANCE;
         config.setCodec(codec);
-        config.useSingleServer().setAddress("redis://localhost:6379");
+        config.useSingleServer().setAddress("redis://localhost:6379")
+            .setConnectionPoolSize(5)
+            .setConnectionMinimumIdleSize(2)
+            .setConnectTimeout(30000);
 
 //        config.useClusterServers()
 //            .addNodeAddress("redis://127.0.0.1:7004", "redis://127.0.0.1:7001");

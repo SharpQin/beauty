@@ -1,14 +1,15 @@
 package cc.microthink.auth.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import javax.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * A Role.
@@ -36,6 +37,9 @@ public class Role implements Serializable {
     @Size(max = 2048)
     @Column("authorities")
     private String authorities;
+
+    @Transient
+    private String[] auths;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -95,6 +99,32 @@ public class Role implements Serializable {
 
     public void setAuthorities(String authorities) {
         this.authorities = authorities;
+    }
+
+    public String[] getAuths() {
+        return this.auths;
+    }
+
+    public void setAuths(String[] auths) {
+        this.auths = auths;
+    }
+
+    public void changeForView() {
+        if (this.authorities != null && this.authorities.length() > 0) {
+            this.auths = this.authorities.split(",");
+        }
+        else {
+            this.auths = new String[]{};
+        }
+    }
+
+    public void changeForSave() {
+        if (this.auths != null && this.auths.length > 0) {
+            this.authorities = Arrays.stream(this.auths).collect(Collectors.joining(","));
+        }
+        else {
+            this.authorities = "";
+        }
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

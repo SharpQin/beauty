@@ -98,6 +98,7 @@ class RoleRepositoryInternalImpl extends SimpleR2dbcRepository<Role, Long> imple
 
     private Role process(Row row, RowMetadata metadata) {
         Role entity = roleMapper.apply(row, "e");
+        entity.changeForView();
         return entity;
     }
 }

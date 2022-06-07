@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -189,6 +191,13 @@ public class AuthorityResource {
                     )
                     .body(countWithEntities.getT2())
             );
+    }
+
+    @GetMapping("/allmenus")
+    public Mono<ResponseEntity<List<Authority>>> getAllMenusForSel(ServerHttpRequest request) {
+        log.debug("REST request to get a page of Menus");
+        //TODO change to menu tree construction.
+        return menuRepository.findAll().filter(authority -> StringUtils.isNotBlank(authority.getAuthKey())).collectList().map(authorities -> ResponseEntity.ok().body(authorities));
     }
 
     /**

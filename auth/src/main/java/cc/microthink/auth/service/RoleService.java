@@ -33,7 +33,7 @@ public class RoleService {
      */
     public Mono<Role> save(Role role) {
         log.debug("Request to save Role : {}", role);
-
+        role.changeForSave();
         return roleRepository.save(role);
     }
 
@@ -45,6 +45,7 @@ public class RoleService {
      */
     public Mono<Role> update(Role role) {
         log.debug("Request to save Role : {}", role);
+        role.changeForSave();
         return roleRepository.save(role);
     }
 
@@ -56,7 +57,7 @@ public class RoleService {
      */
     public Mono<Role> partialUpdate(Role role) {
         log.debug("Request to partially update Role : {}", role);
-
+        role.changeForSave();
         return roleRepository
             .findById(role.getId())
             .map(existingRole -> {

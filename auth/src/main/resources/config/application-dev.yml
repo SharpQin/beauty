@@ -19,6 +19,7 @@ logging:
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
     cc.microthink.auth: DEBUG
+    org.redisson: INFO
 
 eureka:
   instance:
