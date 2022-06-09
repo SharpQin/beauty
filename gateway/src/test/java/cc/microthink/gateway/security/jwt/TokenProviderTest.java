@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cc.microthink.gateway.management.SecurityMetersService;
 import cc.microthink.gateway.security.AuthoritiesConstants;
+import cc.microthink.gateway.service.RedisService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -14,6 +15,7 @@ import java.security.Key;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.redisson.Redisson;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,8 +37,8 @@ class TokenProviderTest {
         jHipsterProperties.getSecurity().getAuthentication().getJwt().setBase64Secret(base64Secret);
 
         SecurityMetersService securityMetersService = new SecurityMetersService(new SimpleMeterRegistry());
-
-        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService);
+        RedisService redisService = new RedisService(Redisson.create());
+        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService, redisService);
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
 
         ReflectionTestUtils.setField(tokenProvider, "key", key);
@@ -95,8 +97,8 @@ class TokenProviderTest {
         jHipsterProperties.getSecurity().getAuthentication().getJwt().setSecret(secret);
 
         SecurityMetersService securityMetersService = new SecurityMetersService(new SimpleMeterRegistry());
-
-        TokenProvider tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService);
+        RedisService redisService = new RedisService(Redisson.create());
+        TokenProvider tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService, redisService);
 
         Key key = (Key) ReflectionTestUtils.getField(tokenProvider, "key");
         assertThat(key).isNotNull().isEqualTo(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)));
@@ -109,8 +111,8 @@ class TokenProviderTest {
         jHipsterProperties.getSecurity().getAuthentication().getJwt().setBase64Secret(base64Secret);
 
         SecurityMetersService securityMetersService = new SecurityMetersService(new SimpleMeterRegistry());
-
-        TokenProvider tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService);
+        RedisService redisService = new RedisService(Redisson.create());
+        TokenProvider tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService, redisService);
 
         Key key = (Key) ReflectionTestUtils.getField(tokenProvider, "key");
         assertThat(key).isNotNull().isEqualTo(Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret)));
