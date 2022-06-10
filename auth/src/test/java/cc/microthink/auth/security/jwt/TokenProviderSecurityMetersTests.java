@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cc.microthink.auth.management.SecurityMetersService;
 import cc.microthink.auth.security.AuthoritiesConstants;
+import cc.microthink.auth.service.RedisService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.redisson.Redisson;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,8 +44,8 @@ class TokenProviderSecurityMetersTests {
         meterRegistry = new SimpleMeterRegistry();
 
         SecurityMetersService securityMetersService = new SecurityMetersService(meterRegistry);
-
-        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService);
+        RedisService redisService = new RedisService(Redisson.create(), null, null);
+        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService, redisService);
         Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
 
         ReflectionTestUtils.setField(tokenProvider, "key", key);

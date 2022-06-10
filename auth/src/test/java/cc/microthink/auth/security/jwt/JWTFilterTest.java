@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cc.microthink.auth.management.SecurityMetersService;
 import cc.microthink.auth.security.AuthoritiesConstants;
+import cc.microthink.auth.service.RedisService;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.redisson.Redisson;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,8 +35,8 @@ class JWTFilterTest {
         jHipsterProperties.getSecurity().getAuthentication().getJwt().setBase64Secret(base64Secret);
 
         SecurityMetersService securityMetersService = new SecurityMetersService(new SimpleMeterRegistry());
-
-        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService);
+        RedisService redisService = new RedisService(Redisson.create(), null, null);
+        tokenProvider = new TokenProvider(jHipsterProperties, securityMetersService, redisService);
         ReflectionTestUtils.setField(tokenProvider, "key", Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret)));
 
         ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", 60000);

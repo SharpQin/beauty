@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -177,6 +179,8 @@ public class RoleResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of roles in body.
      */
     @GetMapping("/roles")
+    //@Secured({"ROLE_MANAGER"})
+    @PreAuthorize("hasRole(\"ADMIN\")")
     public Mono<ResponseEntity<List<Role>>> getAllRoles(
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request,
@@ -207,6 +211,7 @@ public class RoleResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the role, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('role:get')")
     public Mono<ResponseEntity<Role>> getRole(@PathVariable Long id) {
         log.debug("REST request to get Role : {}", id);
         Mono<Role> role = roleService.findOne(id);

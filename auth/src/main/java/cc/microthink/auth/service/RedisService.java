@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class RedisService {
 
@@ -75,6 +80,14 @@ public class RedisService {
         String redisKey = "ROLE_KEY_" + roleName;
         RBucket<String> redisRole = redissonClient.getBucket(redisKey);
         return redisRole.get();
+    }
+
+    public Set<String> getRoleAuthorities(String roleName) {
+        String authString = getRedisRoleAuthorities(roleName);
+        if (StringUtils.isBlank(authString)) {
+            return Collections.emptySet();
+        }
+        return Arrays.stream(authString.split(",")).collect(Collectors.toSet());
     }
 
     public void saveRedisAllAuthorities(String allAuthStr) {

@@ -34,6 +34,7 @@ public class RoleService {
     public Mono<Role> save(Role role) {
         log.debug("Request to save Role : {}", role);
         role.changeForSave();
+        //TODO update redis
         return roleRepository.save(role);
     }
 
@@ -46,6 +47,7 @@ public class RoleService {
     public Mono<Role> update(Role role) {
         log.debug("Request to save Role : {}", role);
         role.changeForSave();
+        //TODO update redis
         return roleRepository.save(role);
     }
 
@@ -66,6 +68,7 @@ public class RoleService {
                 }
                 if (role.getAuthorities() != null) {
                     existingRole.setAuthorities(role.getAuthorities());
+                    //TODO update redis
                 }
                 if (role.getDsc() != null) {
                     existingRole.setDsc(role.getDsc());
@@ -113,6 +116,7 @@ public class RoleService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
+
     public Mono<Role> findOne(Long id) {
         log.debug("Request to get Role : {}", id);
         return roleRepository.findOneWithEagerRelationships(id);
@@ -126,6 +130,7 @@ public class RoleService {
      */
     public Mono<Void> delete(Long id) {
         log.debug("Request to delete Role : {}", id);
+        //TODO update redis
         return roleRepository.deleteById(id);
     }
 }

@@ -1,6 +1,7 @@
 package cc.microthink.auth.security.jwt;
 
 import cc.microthink.auth.management.SecurityMetersService;
+import cc.microthink.auth.service.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
@@ -40,7 +41,9 @@ public class TokenProvider {
 
     private final SecurityMetersService securityMetersService;
 
-    public TokenProvider(JHipsterProperties jHipsterProperties, SecurityMetersService securityMetersService) {
+    private final RedisService redisService;
+
+    public TokenProvider(JHipsterProperties jHipsterProperties, SecurityMetersService securityMetersService, RedisService redisService) {
         byte[] keyBytes;
         String secret = jHipsterProperties.getSecurity().getAuthentication().getJwt().getBase64Secret();
         if (!ObjectUtils.isEmpty(secret)) {
@@ -61,6 +64,7 @@ public class TokenProvider {
             1000 * jHipsterProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
 
         this.securityMetersService = securityMetersService;
+        this.redisService = redisService;
     }
 
     public String createToken(Authentication authentication, boolean rememberMe) {
@@ -92,6 +96,17 @@ public class TokenProvider {
             .filter(auth -> !auth.trim().isEmpty())
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
+
+        Set<String> allRoleAuthorities = new HashSet<>(10);
+        for (GrantedAuthority auth : authorities) {
+            Set<String> authoritiesOfRole = redisService.getRoleAuthorities(auth.getAuthority());
+            if (!authoritiesOfRole.isEmpty()) {
+                allRoleAuthorities.addAll(authoritiesOfRole);
+            }
+        }
+        if (!allRoleAuthorities.isEmpty()) {
+            authorities.addAll((Collection)allRoleAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+        }
 
         User principal = new User(claims.getSubject(), "", authorities);
 

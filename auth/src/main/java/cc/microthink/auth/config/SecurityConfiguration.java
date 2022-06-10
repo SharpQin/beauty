@@ -1,12 +1,8 @@
 package cc.microthink.auth.config;
 
-import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
-
 import cc.microthink.auth.security.AuthoritiesConstants;
-import cc.microthink.auth.security.AuthoritiesFilter;
 import cc.microthink.auth.security.jwt.JWTFilter;
 import cc.microthink.auth.security.jwt.TokenProvider;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -16,25 +12,22 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
-import org.springframework.util.StringUtils;
 import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport;
 import tech.jhipster.config.JHipsterProperties;
 
+import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
+
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
+@EnableReactiveMethodSecurity()
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration {
 
@@ -83,7 +76,6 @@ public class SecurityConfiguration {
             .csrf()
                 .disable()
             .addFilterAt(new JWTFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
-            .addFilterAt(new AuthoritiesFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
             .authenticationManager(reactiveAuthenticationManager())    //TODO note: check?
             .exceptionHandling()
                 .accessDeniedHandler(problemSupport)
