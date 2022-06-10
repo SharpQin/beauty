@@ -2,13 +2,21 @@ package cc.microthink.product.service;
 
 import cc.microthink.product.domain.Product;
 import cc.microthink.product.repository.ProductRepository;
-import java.util.Optional;
+import cc.microthink.product.security.acl.AclDelete;
+import cc.microthink.product.security.acl.AclSave;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link Product}.
@@ -21,8 +29,21 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    private final MutableAclService mutableAclService;
+
+    public ProductService(ProductRepository productRepository, MutableAclService mutableAclService) {
         this.productRepository = productRepository;
+        this.mutableAclService = mutableAclService;
+    }
+
+    private String getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getPrincipal() instanceof UserDetails) {
+            return ((UserDetails) auth.getPrincipal()).getUsername();
+        }
+        else {
+            return auth.getPrincipal().toString();
+        }
     }
 
     /**
@@ -31,9 +52,14 @@ public class ProductService {
      * @param product the entity to save.
      * @return the persisted entity.
      */
+    @AclSave
     public Product save(Product product) {
         log.debug("Request to save Product : {}", product);
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+
+        //updatePermission(savedProduct, BasePermission.ADMINISTRATION);
+
+        return savedProduct;
     }
 
     /**
@@ -44,7 +70,9 @@ public class ProductService {
      */
     public Product update(Product product) {
         log.debug("Request to save Product : {}", product);
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+
+        return savedProduct;
     }
 
     /**
@@ -55,7 +83,6 @@ public class ProductService {
      */
     public Optional<Product> partialUpdate(Product product) {
         log.debug("Request to partially update Product : {}", product);
-
         return productRepository
             .findById(product.getId())
             .map(existingProduct -> {
@@ -129,6 +156,7 @@ public class ProductService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#id, 'cc.microthink.product.domain.Product', admin)")
     public Optional<Product> findOne(Long id) {
         log.debug("Request to get Product : {}", id);
         return productRepository.findOneWithEagerRelationships(id);
@@ -139,6 +167,7 @@ public class ProductService {
      *
      * @param id the id of the entity.
      */
+    @AclDelete(targetClass = Product.class)
     public void delete(Long id) {
         log.debug("Request to delete Product : {}", id);
         productRepository.deleteById(id);

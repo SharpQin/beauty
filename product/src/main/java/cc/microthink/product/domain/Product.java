@@ -20,7 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "product")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Product implements Serializable {
+public class Product implements SerializableId {
 
     private static final long serialVersionUID = 1L;
 
