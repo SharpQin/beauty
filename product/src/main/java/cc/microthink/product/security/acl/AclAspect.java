@@ -8,6 +8,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.CumulativePermission;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.*;
@@ -18,7 +19,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Save and Delete ACL with @AclSave and @AclDelete
+ */
 @Aspect
 @Component
 public class AclAspect {
@@ -53,6 +59,20 @@ public class AclAspect {
         mutableAclService.updateAcl(acl);
     }
 
+    private void createAcl(SerializableId serializableObj, List<Permission> permissions) {
+        log.info("---createAcl: serializableObj.getClass:{}", serializableObj.getClass());
+        ObjectIdentity oi = new ObjectIdentityImpl(serializableObj.getClass(), serializableObj.getId());
+        String currentUser = getCurrentUser();
+        Sid sid = new PrincipalSid(currentUser);
+        //Permission p = BasePermission.ADMINISTRATION;
+
+        MutableAcl acl = mutableAclService.createAcl(oi);
+        for(Permission p : permissions) {
+            acl.insertAce(acl.getEntries().size(), p, sid, true);
+        }
+        mutableAclService.updateAcl(acl);
+    }
+
     private void delAcl(Class targetClass, Serializable id) {
         //acl_object_identity, acl_entry
         ObjectIdentity oid = new ObjectIdentityImpl(targetClass, id);
@@ -66,6 +86,27 @@ public class AclAspect {
         if (!(proceed instanceof SerializableId)) {
             log.warn("aclSaving: Object is not implements SerializableId. Obj:{}", proceed.toString());
         }
+
+        /*
+        CumulativePermission cm = new CumulativePermission();
+        cm.set(BasePermission.ADMINISTRATION)
+            .set(BasePermission.DELETE)
+                .set(BasePermission.CREATE)
+                    .set(BasePermission.WRITE)
+                        .set(BasePermission.READ);
+        createAcl((SerializableId)proceed, cm);
+        */
+
+        /*
+        List<Permission> list = new ArrayList<>();
+        list.add(BasePermission.ADMINISTRATION);
+        list.add(BasePermission.DELETE);
+        list.add(BasePermission.CREATE);
+        list.add(BasePermission.WRITE);
+        list.add(BasePermission.READ);
+        createAcl((SerializableId)proceed, list);
+         */
+
         createAcl((SerializableId)proceed, BasePermission.ADMINISTRATION);
 
         return proceed;

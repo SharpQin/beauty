@@ -1,5 +1,7 @@
 package cc.microthink.product.config;
 
+import cc.microthink.product.security.acl.MaskPermissionGrantingStrategy;
+import cc.microthink.product.security.acl.MultipleSidRetrievalStrategy;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +17,7 @@ import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.MutableAcl;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
+import org.springframework.security.acls.model.SidRetrievalStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.cache.Caching;
@@ -30,17 +33,9 @@ public class SecurityACLConfiguration {
 
     private final DataSource dataSource;
 
-    //private final CacheManager cacheManager;
-
     public SecurityACLConfiguration(DataSource dataSource) {
         this.dataSource = dataSource;
-        //this.cacheManager = cacheManager;  , CacheManager cacheManager
     }
-
-//    @Bean
-//    public EhCacheBasedAclCache aclCache() {
-//        return new EhCacheBasedAclCache(aclEhCacheFactoryBean().getObject(), permissionGrantingStrategy(), aclAuthorizationStrategy());
-//    }
 
     @Bean
     public AclCache aclCache() {
@@ -75,28 +70,19 @@ public class SecurityACLConfiguration {
         return new JCacheCacheManager(jcacheManager);
     }
 
-
-//    @Bean
-//    public EhCacheFactoryBean aclEhCacheFactoryBean() {
-//        EhCacheFactoryBean ehCacheFactoryBean = new EhCacheFactoryBean();
-//        ehCacheFactoryBean.setCacheManager(aclCacheManager().getObject());
-//        ehCacheFactoryBean.setCacheName("aclCache");
-//        return ehCacheFactoryBean;
-//    }
-
-//    @Bean
-//    public EhCacheManagerFactoryBean aclCacheManager() {
-//        return new EhCacheManagerFactoryBean();
-//    }
-
     @Bean
     public PermissionGrantingStrategy permissionGrantingStrategy() {
         return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
+        //TODO Note: Not effective before using by first time.
+        //return new MaskPermissionGrantingStrategy(new ConsoleAuditLogger());
     }
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        AclAuthorizationStrategyImpl aclAuthorizationStrategy = new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        //Note: Not effective. custom SidRetrievalStrategy for mutiple Principal. (Use MultipleSidRetrievalStrategy instead of SidRetrievalStrategyImpl)
+        //aclAuthorizationStrategy.setSidRetrievalStrategy(new MultipleSidRetrievalStrategy());
+        return aclAuthorizationStrategy;
     }
 
     @Bean
@@ -104,6 +90,8 @@ public class SecurityACLConfiguration {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
         AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService());
         expressionHandler.setPermissionEvaluator(permissionEvaluator);
+        //Effective: custom SidRetrievalStrategy for mutiple Principal.
+        //permissionEvaluator.setSidRetrievalStrategy(new MultipleSidRetrievalStrategy());
         expressionHandler.setPermissionCacheOptimizer(new AclPermissionCacheOptimizer(aclService()));
         return expressionHandler;
     }

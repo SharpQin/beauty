@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,23 +38,13 @@ public class ProductService {
         this.mutableAclService = mutableAclService;
     }
 
-    private String getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth.getPrincipal() instanceof UserDetails) {
-            return ((UserDetails) auth.getPrincipal()).getUsername();
-        }
-        else {
-            return auth.getPrincipal().toString();
-        }
-    }
-
     /**
      * Save a product.
      *
      * @param product the entity to save.
      * @return the persisted entity.
      */
-    @AclSave
+    //@AclSave
     public Product save(Product product) {
         log.debug("Request to save Product : {}", product);
         Product savedProduct = productRepository.save(product);
@@ -68,6 +60,7 @@ public class ProductService {
      * @param product the entity to save.
      * @return the persisted entity.
      */
+    //@PreAuthorize("hasPermission(#product, write)")
     public Product update(Product product) {
         log.debug("Request to save Product : {}", product);
         Product savedProduct = productRepository.save(product);
@@ -81,6 +74,7 @@ public class ProductService {
      * @param product the entity to update partially.
      * @return the persisted entity.
      */
+    //@PreAuthorize("hasPermission(#product, write)")
     public Optional<Product> partialUpdate(Product product) {
         log.debug("Request to partially update Product : {}", product);
         return productRepository
@@ -156,7 +150,7 @@ public class ProductService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    @PreAuthorize("hasPermission(#id, 'cc.microthink.product.domain.Product', admin)")
+    //@PreAuthorize("hasPermission(#id, 'cc.microthink.product.domain.Product', admin)")
     public Optional<Product> findOne(Long id) {
         log.debug("Request to get Product : {}", id);
         return productRepository.findOneWithEagerRelationships(id);
@@ -167,7 +161,7 @@ public class ProductService {
      *
      * @param id the id of the entity.
      */
-    @AclDelete(targetClass = Product.class)
+    //@AclDelete(targetClass = Product.class)
     public void delete(Long id) {
         log.debug("Request to delete Product : {}", id);
         productRepository.deleteById(id);
