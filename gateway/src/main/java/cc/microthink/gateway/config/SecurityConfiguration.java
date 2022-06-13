@@ -57,6 +57,7 @@ public class SecurityConfiguration {
     @Bean
     public ReactiveAuthorizationManager reactiveAuthenticationManager() {
         List<String> permitUrls = List.of(
+            "/services/auth/mki/authenticate",
             "/services/auth/api/authenticate",
             "/services/auth/api/register",
             "/services/auth/api/activate",

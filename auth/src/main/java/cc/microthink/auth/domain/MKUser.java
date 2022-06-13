@@ -22,6 +22,7 @@ import java.time.Instant;
 public class MKUser implements Serializable {
 
     @Id
+    @Column("id")
     private Long id;
 
     @NotNull
@@ -40,14 +41,16 @@ public class MKUser implements Serializable {
     private String nickName;
 
     @Size(max = 20)
-    @Column("role")
+    @Column("role_name")
     private String role;
 
     @Email
     @Size(min = 5, max = 254)
+    @Column("email")
     private String email;
 
     @Size(min = 7, max = 20)
+    @Column("phone")
     private String phone;
 
     @NotNull

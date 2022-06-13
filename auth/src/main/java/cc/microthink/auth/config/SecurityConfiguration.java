@@ -112,9 +112,12 @@ public class SecurityConfiguration {
         .and()
             .authorizeExchange()
 
+            .pathMatchers("/mki/authenticate").permitAll()
+            .pathMatchers("/mki/register").permitAll()
+            .pathMatchers("/mki/activate").permitAll()
+            .pathMatchers("/mki/**").authenticated()
+
             .pathMatchers("/api/authenticate").permitAll()
-            .pathMatchers("/api/register").permitAll()
-            .pathMatchers("/api/activate").permitAll()
             .pathMatchers("/api/account/reset-password/init").permitAll()
             .pathMatchers("/api/account/reset-password/finish").permitAll()
             .pathMatchers("/api/auth-info").permitAll()
