@@ -1,0 +1,50 @@
+{
+  "applications": ["gateway", "notification"],
+  "changelogDate": "20220613121124",
+  "clientRootFolder": "notification",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "notification_log",
+  "fields": [
+    {
+      "fieldName": "custId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "custName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "notifyType",
+      "fieldType": "NotifyType",
+      "fieldValues": "EMAIL,SMS,WECHAT"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "NotifyStatus",
+      "fieldValues": "SUCCESS,FAIL,PENDING"
+    },
+    {
+      "fieldName": "notifyTime",
+      "fieldType": "Instant"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "notification",
+  "name": "NotificationLog",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}
