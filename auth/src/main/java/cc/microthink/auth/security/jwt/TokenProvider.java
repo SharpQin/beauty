@@ -1,6 +1,7 @@
 package cc.microthink.auth.security.jwt;
 
 import cc.microthink.auth.management.SecurityMetersService;
+import cc.microthink.auth.security.UserType;
 import cc.microthink.auth.service.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -28,6 +29,8 @@ public class TokenProvider {
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
+
+    private static final String TYPE_KEY = "type";
 
     private static final String INVALID_JWT_TOKEN = "Invalid JWT token.";
 
@@ -82,6 +85,7 @@ public class TokenProvider {
             .builder()
             .setSubject(authentication.getName())
             .claim(AUTHORITIES_KEY, authorities)
+            .claim(TYPE_KEY, ((UserType)authentication.getDetails()).getTypeId())
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)
             .serializeToJsonWith(new JacksonSerializer<>())
@@ -108,9 +112,13 @@ public class TokenProvider {
             authorities.addAll((Collection)allRoleAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         }
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        String userTypeStr = claims.get(TYPE_KEY).toString();
+        UserType userType = UserType.of(userTypeStr);
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        User principal = new User(claims.getSubject(), "", authorities);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        authToken.setDetails(userType);
+        return authToken;
     }
 
     public boolean validateToken(String authToken) {

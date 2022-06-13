@@ -1,9 +1,10 @@
 package cc.microthink.auth.web.rest;
 
+import cc.microthink.auth.security.UserType;
 import cc.microthink.auth.security.jwt.JWTFilter;
+import cc.microthink.auth.security.jwt.JWTToken;
 import cc.microthink.auth.security.jwt.TokenProvider;
 import cc.microthink.auth.web.rest.vm.LoginVM;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,37 +36,19 @@ public class UserJWTController {
 
     @PostMapping("/authenticate")
     public Mono<ResponseEntity<JWTToken>> authorize(@Valid @RequestBody Mono<LoginVM> loginVM) {
+
         return loginVM
-            .flatMap(login ->
-                authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword()))
-                    .flatMap(auth -> Mono.fromCallable(() -> tokenProvider.createToken(auth, login.isRememberMe())))
-            )
+            .flatMap(login -> {
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword());
+                authenticationToken.setDetails(UserType.ofManager());
+                return authenticationManager
+                    .authenticate(authenticationToken)
+                    .flatMap(auth -> Mono.fromCallable(() -> tokenProvider.createToken(auth, login.isRememberMe())));
+                })
             .map(jwt -> {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
                 return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
             });
-    }
-
-    /**
-     * Object to return as body in JWT Authentication.
-     */
-    static class JWTToken {
-
-        private String idToken;
-
-        JWTToken(String idToken) {
-            this.idToken = idToken;
-        }
-
-        @JsonProperty("id_token")
-        String getIdToken() {
-            return idToken;
-        }
-
-        void setIdToken(String idToken) {
-            this.idToken = idToken;
-        }
     }
 }

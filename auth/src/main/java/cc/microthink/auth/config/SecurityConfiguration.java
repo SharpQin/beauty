@@ -1,8 +1,9 @@
 package cc.microthink.auth.config;
 
-import cc.microthink.auth.security.AuthoritiesConstants;
+import cc.microthink.auth.security.*;
 import cc.microthink.auth.security.jwt.JWTFilter;
 import cc.microthink.auth.security.jwt.TokenProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -35,17 +36,21 @@ public class SecurityConfiguration {
 
     private final ReactiveUserDetailsService userDetailsService;
 
+    private final ReactiveUserDetailsService marketUserDetailsService;
+
     private final TokenProvider tokenProvider;
 
     private final SecurityProblemSupport problemSupport;
 
     public SecurityConfiguration(
-        ReactiveUserDetailsService userDetailsService,
+        @Qualifier("userDetailsService") ReactiveUserDetailsService userDetailsService,
+        @Qualifier("mkUserDetailsService") ReactiveUserDetailsService marketUserDetailsService,
         TokenProvider tokenProvider,
         JHipsterProperties jHipsterProperties,
         SecurityProblemSupport problemSupport
     ) {
         this.userDetailsService = userDetailsService;
+        this.marketUserDetailsService = marketUserDetailsService;
         this.tokenProvider = tokenProvider;
         this.jHipsterProperties = jHipsterProperties;
         this.problemSupport = problemSupport;
@@ -58,11 +63,23 @@ public class SecurityConfiguration {
 
     @Bean
     public ReactiveAuthenticationManager reactiveAuthenticationManager() {
-        UserDetailsRepositoryReactiveAuthenticationManager authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(
+        MatchedUserDetailsRepositoryReactiveAuthenticationManager managementAuthenticationManager = new MatchedUserDetailsRepositoryReactiveAuthenticationManager(
             userDetailsService
         );
-        authenticationManager.setPasswordEncoder(passwordEncoder());
-        return authenticationManager;
+        managementAuthenticationManager.setPasswordEncoder(passwordEncoder());
+        managementAuthenticationManager.setMatcher(new ManagementAuthenticationManagerMatcher());
+
+        MatchedUserDetailsRepositoryReactiveAuthenticationManager marketAuthenticationManager = new MatchedUserDetailsRepositoryReactiveAuthenticationManager(
+            marketUserDetailsService
+        );
+        marketAuthenticationManager.setPasswordEncoder(passwordEncoder());
+        marketAuthenticationManager.setMatcher(new MarketAuthenticationManagerMatcher());
+
+        MultipleReactiveAuthenticationManager multipleAuthManager = new MultipleReactiveAuthenticationManager();
+        multipleAuthManager.addAuthenticationManager(managementAuthenticationManager);
+        multipleAuthManager.addAuthenticationManager(marketAuthenticationManager);
+
+        return multipleAuthManager;
     }
 
     @Bean
