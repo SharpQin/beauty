@@ -1,0 +1,32 @@
+package cc.microthink.auth.web.rest.vm;
+
+import cc.microthink.auth.service.dto.MKUserDTO;
+
+import javax.validation.constraints.Size;
+
+public class MKUserVM extends MKUserDTO {
+
+    public static final int PASSWORD_MIN_LENGTH = 4;
+
+    public static final int PASSWORD_MAX_LENGTH = 100;
+
+    @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
+    private String password;
+
+    public MKUserVM() {
+
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "MKUserVM{" + super.toString() + "} ";
+    }
+}
