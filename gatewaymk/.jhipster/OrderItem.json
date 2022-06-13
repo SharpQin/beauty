@@ -1,0 +1,55 @@
+{
+  "applications": ["gateway", "order"],
+  "changelogDate": "20220528091524",
+  "clientRootFolder": "order",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "order_item",
+  "fields": [
+    {
+      "fieldName": "prodId",
+      "fieldType": "Long",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "totalPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "OrderItemStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "AVAILABLE,OUT_OF_STOCK,BACK_ORDER"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "order",
+  "name": "OrderItem",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "order",
+      "otherEntityRelationshipName": "items",
+      "relationshipName": "order",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}

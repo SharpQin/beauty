@@ -1,0 +1,83 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 0,
+    "applicationType": "gateway",
+    "applications": {
+      "auth": {
+        "applicationIndex": 1,
+        "serverPort": "19000"
+      },
+      "customer": {
+        "applicationIndex": 2,
+        "serverPort": "19010"
+      },
+      "order": {
+        "applicationIndex": 4,
+        "serverPort": "19040"
+      },
+      "product": {
+        "applicationIndex": 3,
+        "serverPort": "19030"
+      }
+    },
+    "authenticationType": "jwt",
+    "baseName": "gatewaymk",
+    "blueprints": [],
+    "buildTool": "maven",
+    "cacheProvider": "no",
+    "clientFramework": "vue",
+    "clientPackageManager": "npm",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1653728964429,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "devServerPort": 9060,
+    "dtoSuffix": "DTO",
+    "enableGradleEnterprise": false,
+    "enableHibernateCache": false,
+    "enableSwaggerCodegen": false,
+    "enableTranslation": true,
+    "entities": [
+      "Address",
+      "CusAccount",
+      "Customer",
+      "Menu",
+      "Order",
+      "OrderItem",
+      "Permission",
+      "Product",
+      "ProductCategory",
+      "ProductItem",
+      "Role"
+    ],
+    "entitySuffix": "",
+    "gradleEnterpriseHost": "",
+    "jhiPrefix": "au",
+    "jhipsterVersion": "7.8.1",
+    "jwtSecretKey": "NGM4NTE5OWMzODJlNzZhMjQ3YWY1OWVmYjZjOTk3OWJhMzRiZDBhMTUyOTU0YTFiMzVmYjUwMTVmMGEwOWE1YWE0ODI3YTJlZGI5MDY0ZGUxZTQ4OTI0MWFkODMzZTU0ODM2ODI3MTVhNWYzNTJkNmRmZGYyNGRlYzA3M2RlMGI=",
+    "languages": ["en", "zh-cn"],
+    "lastLiquibaseTimestamp": 1653729624000,
+    "messageBroker": false,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "otherModules": [],
+    "packageFolder": "cc/microthink/gateway",
+    "packageName": "cc.microthink.gateway",
+    "pages": [],
+    "prodDatabaseType": "postgresql",
+    "reactive": true,
+    "searchEngine": false,
+    "serverPort": "9090",
+    "serviceDiscoveryType": "eureka",
+    "skipCheckLengthOfIdentifier": false,
+    "skipClient": true,
+    "skipCommitHook": true,
+    "skipFakeData": false,
+    "skipServer": false,
+    "skipUserManagement": false,
+    "testFrameworks": [],
+    "websocket": false,
+    "withAdminUi": true
+  }
+}

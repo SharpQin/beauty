@@ -1,0 +1,57 @@
+{
+  "applications": ["gateway", "auth"],
+  "changelogDate": "20220528091324",
+  "clientRootFolder": "auth",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "menu",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "30"
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "30"
+    },
+    {
+      "fieldName": "link",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "method",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "authKey",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "30"
+    },
+    {
+      "fieldName": "showed",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "parent",
+      "fieldType": "Long"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "auth",
+  "name": "Menu",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

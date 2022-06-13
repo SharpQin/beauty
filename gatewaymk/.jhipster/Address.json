@@ -1,0 +1,48 @@
+{
+  "applications": ["gateway", "customer"],
+  "changelogDate": "20220528091024",
+  "clientRootFolder": "customer",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "address",
+  "fields": [
+    {
+      "fieldName": "postalCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "30"
+    },
+    {
+      "fieldName": "details",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "120"
+    },
+    {
+      "fieldName": "defaultAddr",
+      "fieldType": "Boolean"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "customer",
+  "name": "Address",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "customer",
+      "otherEntityRelationshipName": "addresses",
+      "relationshipName": "customer",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}
