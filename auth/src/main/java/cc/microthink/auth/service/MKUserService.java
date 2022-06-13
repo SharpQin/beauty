@@ -4,8 +4,10 @@ import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.MKUser;
 import cc.microthink.auth.domain.User;
 import cc.microthink.auth.repository.MKUserRepository;
+import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.security.SecurityUtils;
 import cc.microthink.auth.service.dto.AdminUserDTO;
+import cc.microthink.auth.service.dto.MKUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -81,7 +83,7 @@ public class MKUserService {
     }
 
     @Transactional
-    public Mono<MKUser> registerUser(AdminUserDTO userDTO, String password) {
+    public Mono<MKUser> registerUser(MKUserDTO userDTO, String password) {
         return mkUserRepository
             .findOneByLogin(userDTO.getLogin().toLowerCase())
             .flatMap(existingUser -> {
@@ -107,20 +109,26 @@ public class MKUserService {
                     newUser.setLogin(userDTO.getLogin().toLowerCase());
                     // new user gets initially a generated password
                     newUser.setPassword(encryptedPassword);
-                    newUser.setNickName(userDTO.getFirstName());  //TODO nickName
+                    newUser.setNickName(userDTO.getNickName());
 
                     if (userDTO.getEmail() != null) {
                         newUser.setEmail(userDTO.getEmail().toLowerCase());
                     }
+                    if (userDTO.getPhone() != null) {
+                        newUser.setPhone(userDTO.getPhone());
+                    }
+                    newUser.setRole(AuthoritiesConstants.MARKET);
                     newUser.setImageUrl(userDTO.getImageUrl());
                     newUser.setLangKey(userDTO.getLangKey());
-                    // new user is not active
-                    newUser.setActivated(false);
+                    // new user is not active Note: Set active as default
+                    newUser.setActivated(true);  //false
                     // new user gets registration key
                     newUser.setActivationKey(RandomUtil.generateActivationKey());
                     return newUser;
                 })
-            );
+            )
+            .flatMap(this::saveUser)
+            .doOnNext(user -> log.debug("Created Information for User: {}", user));
     }
 
     @Transactional

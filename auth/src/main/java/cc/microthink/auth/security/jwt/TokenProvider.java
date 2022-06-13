@@ -1,8 +1,8 @@
 package cc.microthink.auth.security.jwt;
 
 import cc.microthink.auth.management.SecurityMetersService;
-import cc.microthink.auth.security.UserType;
 import cc.microthink.auth.service.RedisService;
+import cc.microthink.common.security.UserType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;

@@ -13,13 +13,14 @@ import cc.microthink.auth.web.rest.errors.InvalidPasswordException;
 import cc.microthink.auth.web.rest.errors.LoginAlreadyUsedException;
 import cc.microthink.auth.web.rest.vm.KeyAndPasswordVM;
 import cc.microthink.auth.web.rest.vm.LoginVM;
-import cc.microthink.auth.web.rest.vm.ManagedUserVM;
+import cc.microthink.auth.web.rest.vm.MKUserVM;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -72,18 +73,18 @@ public class MKUserJWTController {
     /**
      * {@code POST  /register} : register the user.
      *
-     * @param managedUserVM the managed user View Model.
+     * @param mkUserVM the managed user View Model.
      * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Void> registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
+    public Mono<Void> registerAccount(@Valid @RequestBody MKUserVM mkUserVM) {
+        if (isPasswordLengthInvalid(mkUserVM.getPassword())) {
             throw new InvalidPasswordException();
         }
-        return userService.registerUser(managedUserVM, managedUserVM.getPassword()).then(); //.doOnSuccess(mailService::sendActivationEmail).then();
+        return userService.registerUser(mkUserVM, mkUserVM.getPassword()).then(); //.doOnSuccess(mailService::sendActivationEmail).then();
     }
 
     /**
@@ -183,8 +184,8 @@ public class MKUserJWTController {
     private static boolean isPasswordLengthInvalid(String password) {
         return (
             StringUtils.isEmpty(password) ||
-                password.length() < ManagedUserVM.PASSWORD_MIN_LENGTH ||
-                password.length() > ManagedUserVM.PASSWORD_MAX_LENGTH
+                password.length() < MKUserVM.PASSWORD_MIN_LENGTH ||
+                password.length() > MKUserVM.PASSWORD_MAX_LENGTH
         );
     }
 

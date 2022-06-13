@@ -131,17 +131,9 @@ public class UserService {
                     newUser.setActivationKey(RandomUtil.generateActivationKey());
                     return newUser;
                 })
-            );
-//            .flatMap(newUser -> {
-//                Set<Authority> authorities = new HashSet<>();
-//                return authorityRepository
-//                    .findById(AuthoritiesConstants.USER)
-//                    .map(authorities::add)
-//                    .thenReturn(newUser)
-//                    .doOnNext(user -> user.setAuthorities(authorities))
-//                    .flatMap(this::saveUser)
-//                    .doOnNext(user -> log.debug("Created Information for User: {}", user));
-//            });
+            )
+            .flatMap(this::saveUser)
+            .doOnNext(user -> log.debug("Created Information for User: {}", user));
     }
 
     @Transactional
