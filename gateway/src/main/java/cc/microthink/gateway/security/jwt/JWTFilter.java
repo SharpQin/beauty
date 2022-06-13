@@ -1,5 +1,6 @@
 package cc.microthink.gateway.security.jwt;
 
+import cc.microthink.common.security.UserType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -28,6 +29,9 @@ public class JWTFilter implements WebFilter {
         String jwt = resolveToken(exchange.getRequest());
         if (StringUtils.hasText(jwt) && this.tokenProvider.validateToken(jwt)) {
             Authentication authentication = this.tokenProvider.getAuthentication(jwt);
+            if (authentication.getDetails() == null || !((UserType)authentication.getDetails()).isManager()) {
+                throw new IllegalArgumentException("Invalid Authorization Token");
+            }
             return chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
         }
         return chain.filter(exchange);
