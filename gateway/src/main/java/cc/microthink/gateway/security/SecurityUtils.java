@@ -1,6 +1,8 @@
 package cc.microthink.gateway.security;
 
 import java.util.Arrays;
+
+import cc.microthink.common.security.AuthoritiesConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;

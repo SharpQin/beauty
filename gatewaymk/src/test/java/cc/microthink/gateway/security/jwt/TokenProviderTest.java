@@ -2,9 +2,8 @@ package cc.microthink.gateway.security.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import cc.microthink.common.security.AuthoritiesConstants;
 import cc.microthink.gateway.management.SecurityMetersService;
-import cc.microthink.gateway.security.AuthoritiesConstants;
-import cc.microthink.gateway.service.RedisService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -15,7 +14,6 @@ import java.security.Key;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.redisson.Redisson;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,6 +1,6 @@
 package cc.microthink.gateway.web.rest;
 
-import cc.microthink.gateway.security.AuthoritiesConstants;
+import cc.microthink.common.security.AuthoritiesConstants;
 import cc.microthink.gateway.web.rest.vm.RouteVM;
 import java.util.ArrayList;
 import java.util.List;

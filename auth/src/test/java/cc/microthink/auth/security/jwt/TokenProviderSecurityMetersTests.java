@@ -3,8 +3,8 @@ package cc.microthink.auth.security.jwt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import cc.microthink.auth.management.SecurityMetersService;
-import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.service.RedisService;
+import cc.microthink.common.security.AuthoritiesConstants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;

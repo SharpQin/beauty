@@ -1,13 +1,10 @@
 package cc.microthink.auth.service;
 
-import cc.microthink.auth.config.Constants;
 import cc.microthink.auth.domain.MKUser;
-import cc.microthink.auth.domain.User;
 import cc.microthink.auth.repository.MKUserRepository;
-import cc.microthink.auth.security.AuthoritiesConstants;
 import cc.microthink.auth.security.SecurityUtils;
-import cc.microthink.auth.service.dto.AdminUserDTO;
 import cc.microthink.auth.service.dto.MKUserDTO;
+import cc.microthink.common.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

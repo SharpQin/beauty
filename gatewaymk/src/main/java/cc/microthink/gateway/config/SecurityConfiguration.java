@@ -1,29 +1,21 @@
 package cc.microthink.gateway.config;
 
-import cc.microthink.gateway.security.AuthoritiesConstants;
-import cc.microthink.gateway.security.authority.AuthorityMatcherProvider;
-import cc.microthink.gateway.security.authority.PathAuthorityReactiveAuthorizationManager;
 import cc.microthink.gateway.security.jwt.JWTFilter;
 import cc.microthink.gateway.security.jwt.TokenProvider;
-import cc.microthink.gateway.service.RedisService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authorization.AuthorizationWebFilter;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
 import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode;
 import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
 import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport;
 import tech.jhipster.config.JHipsterProperties;
-
-import java.util.List;
 
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 

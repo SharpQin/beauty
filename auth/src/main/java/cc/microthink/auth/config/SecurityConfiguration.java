@@ -3,6 +3,7 @@ package cc.microthink.auth.config;
 import cc.microthink.auth.security.*;
 import cc.microthink.auth.security.jwt.JWTFilter;
 import cc.microthink.auth.security.jwt.TokenProvider;
+import cc.microthink.common.security.AuthoritiesConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;

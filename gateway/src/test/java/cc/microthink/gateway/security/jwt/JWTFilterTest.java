@@ -2,8 +2,8 @@ package cc.microthink.gateway.security.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import cc.microthink.common.security.AuthoritiesConstants;
 import cc.microthink.gateway.management.SecurityMetersService;
-import cc.microthink.gateway.security.AuthoritiesConstants;
 import cc.microthink.gateway.service.RedisService;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +12,6 @@ import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
