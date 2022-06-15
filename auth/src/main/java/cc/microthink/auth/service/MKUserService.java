@@ -1,6 +1,7 @@
 package cc.microthink.auth.service;
 
 import cc.microthink.auth.domain.MKUser;
+import cc.microthink.auth.message.out.MessageOutService;
 import cc.microthink.auth.repository.MKUserRepository;
 import cc.microthink.auth.security.SecurityUtils;
 import cc.microthink.auth.service.dto.MKUserDTO;
@@ -30,9 +31,12 @@ public class MKUserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public MKUserService(MKUserRepository mkUserRepository, PasswordEncoder passwordEncoder) {
+    private final MessageOutService messageOutService;
+
+    public MKUserService(MKUserRepository mkUserRepository, PasswordEncoder passwordEncoder, MessageOutService messageOutService) {
         this.mkUserRepository = mkUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.messageOutService = messageOutService;
     }
 
     @Transactional
@@ -125,7 +129,11 @@ public class MKUserService {
                 })
             )
             .flatMap(this::saveUser)
-            .doOnNext(user -> log.debug("Created Information for User: {}", user));
+            .doOnNext(user -> {
+                log.debug("Created Information for User: {}", user);
+                //Email notificaiton
+                messageOutService.sendEmailNotify(user,"Create new User:" + user.getLogin());
+            });
     }
 
     @Transactional

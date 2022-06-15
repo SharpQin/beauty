@@ -127,6 +127,8 @@ spring:
   application:
     name: notification
   cloud:
+    function:
+      definition: notificationConsumer
     stream:
       kafka:
         binder:
@@ -134,14 +136,14 @@ spring:
           auto-create-topics: true
           brokers: localhost:9092
       bindings:
-        binding-in-sse:
-          destination: sse-topic
-          content-type: text/plain
+        notificationConsumer-in-0:
+          destination: notification-topic
+          content-type: application/json
+        notificationConsumer-in:
           group: notification
-        binding-out-sse:
-          destination: sse-topic
-          content-type: text/plain
-          group: notification
+          consumer.concurrency: 2
+          consumer.partitioned: false
+
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file
@@ -202,6 +204,19 @@ spring:
   output:
     ansi:
       console-available: true
+  mail:
+    host: smtp.126.com
+    username: xxx@126.com
+    password: xxxxxx
+    protocol: smtps # smtp | smtps
+    port: 465 #not ssl: 25 | ssl: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+          required: true
 
 server:
   servlet:
@@ -260,3 +275,7 @@ jhipster:
 # ===================================================================
 
 # application:
+application:
+  email:
+    enable: false
+    sender: xxx@126.com  #no-reply@microthink.cc equals to spring.mail.username

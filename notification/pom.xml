@@ -83,6 +83,7 @@
         <properties-maven-plugin.version>1.1.0</properties-maven-plugin.version>
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <!-- jhipster-needle-maven-property -->
+        <micrithink-common.version>0.1.0-SNAPSHOT</micrithink-common.version>
     </properties>
 
     <dependencyManagement>
@@ -342,6 +343,13 @@
             <scope>provided</scope>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
+
+        <dependency>
+            <groupId>cc.microthink</groupId>
+            <artifactId>common</artifactId>
+            <version>${micrithink-common.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
