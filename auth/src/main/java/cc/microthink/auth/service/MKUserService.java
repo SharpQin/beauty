@@ -5,6 +5,7 @@ import cc.microthink.auth.message.out.MessageOutService;
 import cc.microthink.auth.repository.MKUserRepository;
 import cc.microthink.auth.security.SecurityUtils;
 import cc.microthink.auth.service.dto.MKUserDTO;
+import cc.microthink.common.message.user.MessageMKUser;
 import cc.microthink.common.security.AuthoritiesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +134,7 @@ public class MKUserService {
                 log.debug("Created Information for User: {}", user);
                 //Email notificaiton
                 messageOutService.sendEmailNotify(user,"Create new User:" + user.getLogin());
+                messageOutService.sendMKUserAction(user, MessageMKUser.ACTION_CREATE);
             });
     }
 
@@ -150,7 +152,10 @@ public class MKUserService {
                 user.setImageUrl(imageUrl);
                 return saveUser(user);
             })
-            .doOnNext(user -> log.debug("Changed Information for User: {}", user))
+            .doOnNext(user -> {
+                log.debug("Changed Information for User: {}", user);
+                messageOutService.sendMKUserAction(user, MessageMKUser.ACTION_UPDATE);
+            })
             .then();
     }
 

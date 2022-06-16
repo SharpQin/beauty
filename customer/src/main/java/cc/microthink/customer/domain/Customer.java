@@ -1,5 +1,6 @@
 package cc.microthink.customer.domain;
 
+import cc.microthink.common.message.user.MessageMKUser;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
@@ -21,30 +22,38 @@ public class Customer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Same as MKUser.id
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
     private Long id;
 
+    /**
+     * Same as MKUser.login
+     */
     @NotNull
     @Size(max = 50)
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
+    @Size(max = 50)
+    @Column(name = "nick_name", length = 50)
+    private String nickName;
+
     @Size(max = 15)
     @Column(name = "phone", length = 15)
     private String phone;
 
-    @Size(max = 20)
-    @Column(name = "email", length = 20)
+    @Size(max = 120)
+    @Column(name = "email", length = 120)
     private String email;
 
     @Column(name = "birthday")
     private LocalDate birthday;
 
-    @Size(max = 50)
-    @Column(name = "image_url", length = 50)
+    @Size(max = 200)
+    @Column(name = "image_url", length = 200)
     private String imageUrl;
 
     @Size(min = 2, max = 10)
@@ -84,6 +93,29 @@ public class Customer implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
+    public Customer() {}
+
+    public Customer(MessageMKUser.MKUser msgUser) {
+        this(msgUser.getId(), msgUser.getLogin(), msgUser.getNickName(), msgUser.getPhone(), msgUser.getEmail(), msgUser.getImageUrl(), msgUser.getLangKey(), msgUser.getCreatedDate());
+    }
+
+    public Customer(Long id, String name, String nickName, String phone, String email, String imageUrl, String langKey, Instant createdDate) {
+        this.id = id;
+        this.name = name;
+        this.nickName = nickName;
+        this.phone = phone;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.langKey = langKey;
+        this.createdDate = createdDate;
+
+        this.vip = 1;
+        this.level = 1;
+        this.point = 0;
+        this.activated = true;
+        //this.birthday
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -108,6 +140,19 @@ public class Customer implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNickName() {
+        return this.nickName;
+    }
+
+    public Customer nickName(String nickName) {
+        this.setNickName(nickName);
+        return this;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getPhone() {
@@ -340,6 +385,7 @@ public class Customer implements Serializable {
         return "Customer{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", nickName='" + getNickName() + "'" +
             ", phone='" + getPhone() + "'" +
             ", email='" + getEmail() + "'" +
             ", birthday='" + getBirthday() + "'" +

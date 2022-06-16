@@ -128,6 +128,8 @@ spring:
   application:
     name: customer
   cloud:
+    function:
+      definition: onMKUserActionConsumer
     stream:
       kafka:
         binder:
@@ -135,14 +137,13 @@ spring:
           auto-create-topics: true
           brokers: localhost:9092
       bindings:
-        binding-in-sse:
-          destination: sse-topic
-          content-type: text/plain
-          group: customer
-        binding-out-sse:
-          destination: sse-topic
-          content-type: text/plain
-          group: customer
+        onMKUserActionConsumer-in-0:
+          destination: mkuser-topic
+          content-type: application/json
+        onMKUserActionConsumer-in:
+          consumer.concurrency: 2
+          consumer.partitioned: false
+
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file

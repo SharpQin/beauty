@@ -40,12 +40,12 @@ public class MKUser implements Serializable {
     @Column("nick_name")
     private String nickName;
 
-    @Size(max = 20)
+    @Size(max = 50)
     @Column("role_name")
     private String role;
 
     @Email
-    @Size(min = 5, max = 254)
+    @Size(min = 5, max = 120)
     @Column("email")
     private String email;
 

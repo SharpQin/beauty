@@ -44,7 +44,7 @@ public class EmailNotify implements INotify{
             log.debug("notify: application.email.enable:{}", properties.getEmail().isEnable());
             log.debug("notify: application.email.sender:{}", properties.getEmail().getSender());
         }
-        if (properties.getEmail().isEnable()) {
+        if (!properties.getEmail().isEnable()) {
             log.warn("notify: sending email is not enabled and It's dummy to success to send a email.");
             return true;
         }
