@@ -132,18 +132,19 @@ spring:
     stream:
       kafka:
         binder:
-          replicationFactor: 1
+          replicationFactor: 1  #3
           auto-create-topics: true
+          autoAddPartitions: true
           brokers: localhost:9092
       bindings:
         notificaiton-out-0:
           destination: notification-topic
           content-type: application/json
-          producer.partition-count: 1 #autoAddPartitions if not default 1
+          producer.partition-count: 10 #autoAddPartitions if not default 1
         mkuser-out-0:
           destination: mkuser-topic
           content-type: application/json
-          producer.partition-count: 1
+          producer.partition-count: 10
 
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.

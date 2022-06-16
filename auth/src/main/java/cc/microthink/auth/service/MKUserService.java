@@ -133,8 +133,9 @@ public class MKUserService {
             .doOnNext(user -> {
                 log.debug("Created Information for User: {}", user);
                 //Email notificaiton
-                messageOutService.sendEmailNotify(user,"Create new User:" + user.getLogin());
-                messageOutService.sendMKUserAction(user, MessageMKUser.ACTION_CREATE);
+                boolean notifyResult = messageOutService.sendEmailNotify(user,"Create new User:" + user.getLogin());
+                boolean userActionResult = messageOutService.sendMKUserAction(user, MessageMKUser.ACTION_CREATE);
+                log.info("notifyResult:{}, userActionResult:{}", notifyResult, userActionResult);
             });
     }
 

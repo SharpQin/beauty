@@ -141,7 +141,7 @@ spring:
           content-type: application/json
         notificationConsumer-in:
           group: notification
-          consumer.concurrency: 2
+          consumer.concurrency: 5
           consumer.partitioned: false
 
   profiles:
