@@ -135,11 +135,12 @@ spring:
           replicationFactor: 1
           auto-create-topics: true
           brokers: localhost:9092
+          #consumer-properties:
+            #auto.offset.reset: earliest #earliest | latest -> representing the start or the end of the topic
       bindings:
         notificationConsumer-in-0:
           destination: notification-topic
           content-type: application/json
-        notificationConsumer-in:
           group: notification
           consumer.concurrency: 5
           consumer.partitioned: false

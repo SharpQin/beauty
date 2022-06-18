@@ -129,20 +129,58 @@ spring:
     name: customer
   cloud:
     function:
-      definition: onMKUserActionConsumer
+      definition: onMKUserActionConsumer;onMKUserFailConsumer
     stream:
       kafka:
-        binder:
+        bindings:
+          onMKUserActionConsumer-in-0: # KafkaConsumerProperties
+            consumer:
+              autoRebalanceEnabled: true
+              autoCommitOffset: true
+              autoCommitOnError: true
+              startOffset: earliest #earliest | latest -> representing the start or the end of the topic
+              resetOffsets: false #false | true
+              enableDlq: true
+              dlqName: mkuser-dlq-topic
+              dlqPartitions: 1 #'dlqPartitions' is > 1 but a custom DlqPartitionFunction bean is not provided
+
+        binder: # KafkaBinderConfigurationProperties
           replicationFactor: 1
           auto-create-topics: true
           brokers: localhost:9092
+          #consumer-properties:
+
       bindings:
-        onMKUserActionConsumer-in-0:
+        onMKUserActionConsumer-in-0: # BindingProperties
           destination: mkuser-topic
           content-type: application/json
-        onMKUserActionConsumer-in:
-          consumer.concurrency: 2
-          consumer.partitioned: false
+          group: mkuser-group
+          consumer:
+            concurrency: 5 #10
+            partitioned: false
+            maxAttempts: 3
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 3000
+            backOffMultiplier: 2.0
+
+        #If creation customer fails
+        onMKUserFailConsumer-in-0:
+          destination: mkuser-dlq-topic
+          content-type: application/json
+          group: mkuser-dlq-group
+          consumer:
+            concurrency: 1
+            partitioned: false
+            maxAttempts: 2147483647
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 30000
+            backOffMultiplier: 2.0
+
+        mkuser-consumer-dlq-out:
+          destination: mkuser-dlq-topic
+          content-type: application/json
+
+
 
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.

@@ -17,10 +17,13 @@
             <column name="name" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
+            <column name="nick_name" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
             <column name="phone" type="varchar(15)">
                 <constraints nullable="true" />
             </column>
-            <column name="email" type="varchar(20)">
+            <column name="email" type="varchar(120)">
                 <constraints nullable="true" />
             </column>
             <column name="birthday" type="date">
@@ -74,6 +77,7 @@
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="name" type="string"/>
+            <column name="nick_name" type="string"/>
             <column name="phone" type="string"/>
             <column name="email" type="string"/>
             <column name="birthday" type="date"/>

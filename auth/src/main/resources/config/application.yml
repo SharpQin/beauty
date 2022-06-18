@@ -136,6 +136,7 @@ spring:
           auto-create-topics: true
           autoAddPartitions: true
           brokers: localhost:9092
+
       bindings:
         notificaiton-out-0:
           destination: notification-topic
