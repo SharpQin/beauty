@@ -13,10 +13,16 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * A Product.
  */
+
+
+@Document(indexName = "product_index")
 @Entity
 @Table(name = "product")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -29,51 +35,65 @@ public class Product implements SerializableId {
     @Column(name = "id")
     private Long id;
 
+    @Field(type = FieldType.Keyword, name = "name")
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Field(type = FieldType.Double, name = "price")
     @NotNull
     @Column(name = "price", precision = 21, scale = 2, nullable = false)
     private BigDecimal price;
 
+    @Field(type = FieldType.Text, name = "type")
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private ProductType type;
 
+    @Field(type = FieldType.Text, name = "image")
     @Column(name = "image")
     private String image;
 
+    @Field(type = FieldType.Date, name = "releaseDate")
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
+    @Field(type = FieldType.Date, name = "liveTime")
     @Column(name = "live_time")
     private Instant liveTime;
 
+    @Field(type = FieldType.Date, name = "createdTime")
     @Column(name = "created_time")
     private Instant createdTime;
 
+    @Field(type = FieldType.Date, name = "updatedTime")
     @Column(name = "updated_time")
     private Instant updatedTime;
 
+    @Field(type = FieldType.Integer, name = "stock")
     @Column(name = "stock")
     private Integer stock;
 
+    @Field(type = FieldType.Boolean, name = "showed")
     @Column(name = "showed")
     private Boolean showed;
 
+    @Field(type = FieldType.Text, name = "status")
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ProductStatus status;
 
+    @Field(type = FieldType.Text, name = "dsc")
     @Column(name = "dsc")
     private String dsc;
 
+    @Field(type = FieldType.Nested, includeInParent = true)
     @OneToMany(mappedBy = "product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "product" }, allowSetters = true)
     private Set<ProductItem> items = new HashSet<>();
 
+    @Field(type = FieldType.Nested, includeInParent = true)
     @ManyToOne
     @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
     private ProductCategory category;

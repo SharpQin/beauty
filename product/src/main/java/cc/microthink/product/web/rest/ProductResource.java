@@ -189,4 +189,15 @@ public class ProductResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/queryProducts")
+    public ResponseEntity<List<Product>> getAllProducts(String name,
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+
+        log.debug("REST request to get a page of Products");
+        Page<Product> page = productService.findProducts(name, pageable);
+        log.info("getAllProducts: products:{}", page.getContent());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 }
