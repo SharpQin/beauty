@@ -49,7 +49,6 @@ public class MKUserDetailsService implements ReactiveUserDetailsService {
         if (!user.isActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
-        //TODO need change more
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>(1);
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole()));
         return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(), grantedAuthorities);

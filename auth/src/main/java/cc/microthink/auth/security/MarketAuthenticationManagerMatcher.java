@@ -1,5 +1,7 @@
 package cc.microthink.auth.security;
 
+import cc.microthink.common.security.UserType;
+
 public class MarketAuthenticationManagerMatcher implements AuthenticationManagerMatcher {
     @Override
     public boolean isMatched(Object details) {

@@ -1,10 +1,10 @@
 package cc.microthink.auth.web.rest;
 
-import cc.microthink.auth.security.UserType;
 import cc.microthink.auth.security.jwt.JWTFilter;
 import cc.microthink.auth.security.jwt.JWTToken;
 import cc.microthink.auth.security.jwt.TokenProvider;
 import cc.microthink.auth.web.rest.vm.LoginVM;
+import cc.microthink.common.security.UserType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
