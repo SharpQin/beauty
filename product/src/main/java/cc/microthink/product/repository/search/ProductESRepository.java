@@ -7,10 +7,12 @@ import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductESRepository extends ElasticsearchRepository<Product, Long> {
 
-    Page<Product> findByName(String name, Pageable pageable);
+    List<Product> findByName(String name);
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"name\": \"?0\"}}]}}")
     Page<Product> findByCustomCondiction(String name, Pageable pageable);

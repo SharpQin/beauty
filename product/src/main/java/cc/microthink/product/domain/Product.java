@@ -3,25 +3,23 @@ package cc.microthink.product.domain;
 import cc.microthink.product.domain.enumeration.ProductStatus;
 import cc.microthink.product.domain.enumeration.ProductType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A Product.
  */
-
-
 @Document(indexName = "product_index")
 @Entity
 @Table(name = "product")
@@ -35,7 +33,7 @@ public class Product implements SerializableId {
     @Column(name = "id")
     private Long id;
 
-    @Field(type = FieldType.Keyword, name = "name")
+    @Field(type = FieldType.Text, name = "name")
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
@@ -78,7 +76,7 @@ public class Product implements SerializableId {
     @Column(name = "showed")
     private Boolean showed;
 
-    @Field(type = FieldType.Text, name = "status")
+    @Field(type = FieldType.Keyword, name = "status")
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ProductStatus status;
