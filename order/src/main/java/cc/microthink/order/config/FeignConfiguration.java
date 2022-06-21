@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@EnableFeignClients(basePackages = "cc.microthink.order")
+@EnableFeignClients(basePackages = "cc.microthink.order.client")
 @Import(FeignClientsConfiguration.class)
 public class FeignConfiguration {
 
@@ -18,4 +18,5 @@ public class FeignConfiguration {
     feign.Logger.Level feignLoggerLevel() {
         return feign.Logger.Level.BASIC;
     }
+
 }

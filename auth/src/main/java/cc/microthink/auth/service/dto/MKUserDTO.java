@@ -9,6 +9,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 
+/**
+ * A DTO representing a market user, with his authorities.
+ */
 public class MKUserDTO {
 
     private Long id;

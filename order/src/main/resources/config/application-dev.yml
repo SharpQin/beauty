@@ -19,6 +19,7 @@ logging:
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
     cc.microthink.order: DEBUG
+    cc.microthink.order.client: DEBUG
 
 eureka:
   instance:
