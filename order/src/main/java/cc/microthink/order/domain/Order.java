@@ -49,10 +49,23 @@ public class Order implements Serializable {
     @Column(name = "remark")
     private String remark;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "order" }, allowSetters = true)
     private Set<OrderItem> items = new HashSet<>();
+
+    public Order() {}
+
+    public Order(UUID serialNo, BigDecimal price, Long custId, String remark) {
+        this.serialNo = serialNo;
+        this.price = price;
+        this.custId = custId;
+        this.remark = remark;
+
+        this.status = OrderStatus.PENDING;
+        this.createdTime = Instant.now();
+        this.actionTime = Instant.now();
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 

@@ -52,6 +52,16 @@ public class OrderItem implements Serializable {
     @JsonIgnoreProperties(value = { "items" }, allowSetters = true)
     private Order order;
 
+    public OrderItem() {}
+
+    public OrderItem(Long prodId, Integer quantity, BigDecimal totalPrice, BigDecimal price) {
+        this.prodId = prodId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.price = price;
+        this.status = OrderItemStatus.AVAILABLE;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {

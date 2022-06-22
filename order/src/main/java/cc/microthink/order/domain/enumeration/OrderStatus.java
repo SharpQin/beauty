@@ -5,6 +5,7 @@ package cc.microthink.order.domain.enumeration;
  */
 public enum OrderStatus {
     PENDING,
+    CREATED,
     COMPLETED,
     CANCELLED,
 }

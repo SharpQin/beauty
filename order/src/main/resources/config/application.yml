@@ -156,21 +156,62 @@ spring:
   application:
     name: order
   cloud:
+    function:
+      definition: onOrderProdResConsumer;onOrderProdResFailConsumer
     stream:
       kafka:
         binder:
           replicationFactor: 1
           auto-create-topics: true
+          autoAddPartitions: true
           brokers: localhost:9092
+        bindings:
+          onOrderProdResConsumer-in-0: # KafkaConsumerProperties
+            consumer:
+              autoRebalanceEnabled: true
+              ackEachRecord: true
+              autoCommitOffset: true
+              autoCommitOnError: true
+              startOffset: earliest #earliest | latest -> representing the start or the end of the topic
+              resetOffsets: false #false | true
+              enableDlq: true
+              dlqName: order-prod-res-dlq-topic
+              dlqPartitions: 1
       bindings:
-        binding-in-sse:
-          destination: sse-topic
-          content-type: text/plain
-          group: order
-        binding-out-sse:
-          destination: sse-topic
-          content-type: text/plain
-          group: order
+        orderEvent-out-0:
+          destination: order-topic
+          content-type: application/json
+          producer.partition-count: 3
+
+        onOrderProdResConsumer-in-0: # BindingProperties
+          destination: order-prod-res-topic
+          content-type: application/json
+          group: order-prod-res-group
+          consumer:
+            concurrency: 5
+            partitioned: false
+            maxAttempts: 3
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 3000
+            backOffMultiplier: 2.0
+
+        #If order-product response event fails
+        onOrderProdResFailConsumer-in-0:
+          destination: order-prod-res-dlq-topic
+          content-type: application/json
+          group: order-prod-res-dlq-group
+          consumer:
+            concurrency: 1
+            partitioned: false
+            maxAttempts: 2147483647
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 30000
+            backOffMultiplier: 2.0
+
+        orderProdResEvent-dlq-out:
+          destination: order-prod-res-dlq-topic
+          content-type: application/json
+
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file

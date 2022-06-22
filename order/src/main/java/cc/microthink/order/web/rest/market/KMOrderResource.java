@@ -2,10 +2,8 @@ package cc.microthink.order.web.rest.market;
 
 import cc.microthink.order.service.MKOrderService;
 import cc.microthink.order.service.dto.CreateOrderDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import cc.microthink.order.service.dto.CreateOrderResult;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/mki")
@@ -19,8 +17,13 @@ public class KMOrderResource {
     }
 
     @PostMapping("/order/cre")
-    public String createOrder(@RequestBody CreateOrderDTO orderDTO) {
-        orderService.createOrder(orderDTO);
+    public CreateOrderResult createOrder(@RequestBody CreateOrderDTO orderDTO) {
+        return orderService.createOrder(orderDTO);
+    }
+
+    @GetMapping("/order/cancel")
+    public String createOrder(Long orderId) {
+        orderService.cancelOrder(orderId);
         return "success";
     }
 

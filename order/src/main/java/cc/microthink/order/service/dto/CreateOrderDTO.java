@@ -6,6 +6,8 @@ public class CreateOrderDTO {
 
     private Integer count;
 
+    private String remark;
+
     public Long getProductId() {
         return productId;
     }
@@ -20,5 +22,13 @@ public class CreateOrderDTO {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
