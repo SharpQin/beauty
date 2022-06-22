@@ -1,6 +1,7 @@
 package cc.microthink.product.service;
 
 import cc.microthink.common.dto.product.ProductDTO;
+import cc.microthink.common.message.order.OrderMessage;
 import cc.microthink.product.domain.Product;
 import cc.microthink.product.repository.ProductRepository;
 import cc.microthink.product.security.SecurityUtils;
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,6 +51,49 @@ public class MKProductService {
         }
 
         return dto;
+    }
+
+    public boolean consumeProduct(String msgId, OrderMessage orderMsg) {
+        log.debug("consumeProduct:msgId:{}, orderMsg:{}", msgId, orderMsg);
+        boolean isOk = true;
+        //check if exist msgId
+
+        //update product stock: decrease stock
+        List<Product> expectList = new ArrayList<>(orderMsg.getItems().size());
+        for (OrderMessage.OrderItem item : orderMsg.getItems()) {
+            Long prodId = item.getProdId();
+            Integer quality = item.getQuantity();
+            Product product = productRepository.getById(prodId);
+            if (product.getStock() < item.getQuantity()) {
+                isOk = false;
+                expectList.clear();
+                break;
+            }
+            product.decrease(item.getQuantity());
+            expectList.add(product);
+        }
+
+        if (isOk) {
+            productRepository.saveAll(expectList);
+        }
+
+        return isOk;
+    }
+
+    public void recoverProduct(String msgId, OrderMessage orderMsg) {
+        log.debug("recoverProduct:msgId:{}, orderMsg:{}", msgId, orderMsg);
+        //check if exist msgId
+
+        //update product stock: increase stock
+        List<Product> expectList = new ArrayList<>(orderMsg.getItems().size());
+        for (OrderMessage.OrderItem item : orderMsg.getItems()) {
+            Long prodId = item.getProdId();
+            Integer quality = item.getQuantity();
+            Product product = productRepository.getById(prodId);
+            product.increaseStock(item.getQuantity());
+            expectList.add(product);
+        }
+        productRepository.saveAll(expectList);
     }
 
 }

@@ -85,6 +85,10 @@ public class Product implements SerializableId {
     @Column(name = "dsc")
     private String dsc;
 
+    //TODO add version for concurrent updating
+//    @Version
+//    private Long version;
+
     @Field(type = FieldType.Nested, includeInParent = true)
     @OneToMany(mappedBy = "product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -309,6 +313,17 @@ public class Product implements SerializableId {
     public Product category(ProductCategory productCategory) {
         this.setCategory(productCategory);
         return this;
+    }
+
+    public void increaseStock(Integer value) {
+        this.stock += value;
+    }
+
+    public void decrease(Integer value) {
+        if (this.stock < value) {
+            throw new IllegalArgumentException("The decreasing value is greater than current stock.");
+        }
+        this.stock -= value;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
