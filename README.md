@@ -1,10 +1,10 @@
 # Beauty Store
 Java Microservices with Spring Boot, Spring Cloud, Spring Cloud Gateway, Spring Security and JHipster
 
-Microservice base code were generated with JHipster, but I change a lot for matching my architecture design.
-Extract frontend code from gateway project. Keep gateway independence and stable whatever new features.
+Microservice base code were generated with JHipster, but I have changed a lot for matching my architecture design.
+Extract frontend code from gateway project. Maintain gateway independence and stability.
 
-## My final design as below:
+## Projects description as below:
 - gateway - Authorize for management user and route to microservices.
 - gatewaymk - Authorize for market customer and route to microservices.
 - auth-service - Authentication Service which support two type of users and manage users and authority assignment.
@@ -14,8 +14,9 @@ Extract frontend code from gateway project. Keep gateway independence and stable
 - payment-service - Charges the customer's credit card or integrate with third part payment.
 - shipping-service - Gives shipping cost estimates based on goods and the received address. Manage the delivery status.
 - notification-service - Notify user by email, sms or third part interface.
+- common - Shared by all microservices. Provide DTOs for Openfeign invocation and Message Objects for Kafka communication.
 
-- beauty-frontend-web - Frontend web which link to gateway for management user.
+- [beauty-frontend-web](https://github.com/SharpQin/beauty-frontend-web) - Frontend web which link to gateway for management user.
 - beauty-frontend-market-web - Frontend web which link to gatewaymk for customer.
 
 ## Features
@@ -23,10 +24,10 @@ Extract frontend code from gateway project. Keep gateway independence and stable
 - Using JWT, no matter how many permission data, the length of the JWT will not increase significantly to ensure 
   the performance of transmission and authentication in microservices.
 - Support Domain Object Security (ACLs).
-- Using kafka to communication between microservices
-- Support search text with Elasticsearch.
+- Using kafka to communication between microservices.
+- Support full-text search with Elasticsearch.
 - Using Liquibase for DB script management.
-- Support to deploy to Kubernetes.
+- Kubernetes deployment.
 
 ## Architecture
 ![architecture](https://github.com/SharpQin/beauty/raw/main/doc/architecture-diagram.png)
