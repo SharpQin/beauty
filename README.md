@@ -29,7 +29,7 @@ Extract frontend code from gateway project. Keep gateway independence and stable
 - Support to deploy to Kubernetes.
 
 ##Architecture
-![architecture](https://xxxx.png)
+![architecture]([https://xxxx.png](https://github.com/SharpQin/beauty/blob/main/doc/architecture-diagram.png))
 
 ##Technology
 - gateway: gateway | reactive | Redis
