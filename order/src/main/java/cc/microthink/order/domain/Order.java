@@ -204,6 +204,24 @@ public class Order implements Serializable {
         return this;
     }
 
+    public boolean isPending() {
+        return (this.status == OrderStatus.PENDING);
+    }
+
+    public boolean isCreated() {
+        return (this.status == OrderStatus.CREATED);
+    }
+
+    public boolean isCompleted() {
+        return (this.status == OrderStatus.COMPLETED);
+    }
+
+    public boolean isCancelled() {
+        return (this.status == OrderStatus.CANCELLED);
+    }
+
+
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

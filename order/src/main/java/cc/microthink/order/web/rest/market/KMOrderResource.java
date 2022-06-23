@@ -22,9 +22,9 @@ public class KMOrderResource {
     }
 
     @GetMapping("/order/cancel")
-    public String createOrder(Long orderId) {
-        orderService.cancelOrder(orderId);
-        return "success";
+    public String cancelOrder(Long orderId) {
+        boolean result = orderService.cancelOrder(orderId);
+        return String.valueOf(result);
     }
 
 }

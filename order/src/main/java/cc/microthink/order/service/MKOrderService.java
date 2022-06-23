@@ -74,9 +74,22 @@ public class MKOrderService {
         return new CreateOrderResult(savedOrder.getId(), savedOrder.getSerialNo().toString(), productDTO.getName(), savedOrder.getStatus().toString());
     }
 
-    public void cancelOrder(Long orderId) {
+    public boolean cancelOrder(Long orderId) {
         log.debug("---cancelOrder---");
         Order order = orderRepository.getById(orderId);
+        if (order.isPending()) {
+            log.warn("cancelOrder: Order can't be cancelled as its pending. orderId:{}", orderId);
+            return false;
+            //throw exception?
+        }
+        if (order.isCancelled()) {
+            log.warn("cancelOrder: Order has be cancelled already. orderId:{}", orderId);
+            return false;
+        }
+        if (order.isCompleted()) {
+            log.info("cancelOrder: The completed Order will be cancelled. orderId:{}", orderId);
+        }
+
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
 
@@ -84,6 +97,8 @@ public class MKOrderService {
         if (log.isInfoEnabled()) {
             log.info("cancelOrder: sendOrderCancelEvent result:{}", success);
         }
+        //TODO check: success of sendOrderCancelEvent
+        return true;
     }
 
     public void msgConsumeCreateOrderResult(String msgId, Long orderId, boolean success) {

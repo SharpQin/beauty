@@ -181,7 +181,9 @@ spring:
         orderEvent-out-0:
           destination: order-topic
           content-type: application/json
-          producer.partition-count: 3
+          producer:
+            partition-count: 3
+            partitionKeyExpression: headers['partitionKey'] #headers.partitionKey
 
         onOrderProdResConsumer-in-0: # BindingProperties
           destination: order-prod-res-topic

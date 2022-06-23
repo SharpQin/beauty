@@ -158,7 +158,7 @@ spring:
           group: order-prod-group
           consumer:
             concurrency: 5
-            partitioned: false
+            partitioned: true
             maxAttempts: 3
             backOffInitialInterval: 1000
             backOffMaxInterval: 3000
