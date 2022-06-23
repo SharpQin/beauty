@@ -4,7 +4,7 @@ Java Microservices with Spring Boot, Spring Cloud, Spring Cloud Gateway, Spring 
 Microservice base code were generated with JHipster, but I change a lot for matching my architecture design.
 Extract frontend code from gateway project. Keep gateway independence and stable whatever new features.
 
-##My final design as below:
+## My final design as below:
 - gateway - Authorize for management user and route to microservices.
 - gatewaymk - Authorize for market customer and route to microservices.
 - auth-service - Authentication Service which support two type of users and manage users and authority assignment.
@@ -18,7 +18,7 @@ Extract frontend code from gateway project. Keep gateway independence and stable
 - beauty-frontend-web - Frontend web which link to gateway for management user.
 - beauty-frontend-market-web - Frontend web which link to gatewaymk for customer.
 
-##Features
+## Features
 - Support authorization base on RBAC and ABAC. 
 - Using JWT, no matter how many permission data, the length of the JWT will not increase significantly to ensure 
   the performance of transmission and authentication in microservices.
@@ -28,10 +28,10 @@ Extract frontend code from gateway project. Keep gateway independence and stable
 - Using Liquibase for DB script management.
 - Support to deploy to Kubernetes.
 
-##Architecture
+## Architecture
 ![architecture](https://github.com/SharpQin/beauty/raw/main/doc/architecture-diagram.png)
 
-##Technology
+## Technology
 - gateway: gateway | reactive | Redis
 - gatewaymk: gateway | reactive
 - auth: microservice | reactive | postgresql | Hazecast | Redis | Kafka | (Hibernate|R2DBC)
