@@ -18,6 +18,7 @@ logging:
     ROOT: DEBUG
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
+    com.hazelcast: DEBUG
     cc.microthink.order: DEBUG
     cc.microthink.order.client: DEBUG
 
@@ -58,7 +59,7 @@ spring:
     database-platform: tech.jhipster.domain.util.FixedPostgreSQL10Dialect
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
-    contexts: dev, faker
+    contexts: dev
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
@@ -92,6 +93,15 @@ jhipster:
     hazelcast: # Hazelcast distributed cache
       time-to-live-seconds: 3600
       backup-count: 1
+      # Configure the Hazelcast management center
+      # Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+      #management-center:
+        #enabled: true # Hazelcast management center is disabled by default
+        #update-interval: 3 # Updates are sent to the Hazelcast management center every 3 seconds by default
+        # Default URL for Hazelcast management center when using JHipster's Docker Compose configuration
+        # See src/main/docker/hazelcast-management-center.yml
+        # Warning, the default port is 8180 as port 8080 is already used by JHipster
+        #url: http://localhost:8180/mancenter
   registry:
     password: admin
   # CORS is disabled by default on microservices, as you should access them through a gateway.

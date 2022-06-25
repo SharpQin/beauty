@@ -90,7 +90,7 @@ public class CacheConfiguration {
                 config.getNetworkConfig().setPort(serverProperties.getPort() + 5701);
                 config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
                 for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
-                    String clusterMember = "127.0.0.1:" + (instance.getPort() + 5701);
+                    String clusterMember = instance.getHost() + ":" + (instance.getPort() + 5701); // 192.168.0.102, 127.0.0.1
                     log.debug("Adding Hazelcast (dev) cluster member {}", clusterMember);
                     config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
                 }

@@ -1,5 +1,6 @@
 package cc.microthink.order.web.rest.market;
 
+import cc.microthink.order.domain.enumeration.OrderCancelReason;
 import cc.microthink.order.service.MKOrderService;
 import cc.microthink.order.service.dto.CreateOrderDTO;
 import cc.microthink.order.service.dto.CreateOrderResult;
@@ -23,7 +24,7 @@ public class KMOrderResource {
 
     @GetMapping("/order/cancel")
     public String cancelOrder(Long orderId) {
-        boolean result = orderService.cancelOrder(orderId);
+        boolean result = orderService.cancelOrder(orderId, OrderCancelReason.MANUAL);
         return String.valueOf(result);
     }
 

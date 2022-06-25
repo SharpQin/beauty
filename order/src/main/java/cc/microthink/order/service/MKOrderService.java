@@ -6,7 +6,12 @@ import cc.microthink.order.client.customer.CustomerClient;
 import cc.microthink.order.client.product.ProductClient;
 import cc.microthink.order.domain.Order;
 import cc.microthink.order.domain.OrderItem;
+import cc.microthink.order.domain.enumeration.OrderCancelReason;
+import cc.microthink.order.domain.enumeration.OrderItemStatus;
 import cc.microthink.order.domain.enumeration.OrderStatus;
+import cc.microthink.order.lock.DistributedLock;
+import cc.microthink.order.lock.DistributedLocker;
+import cc.microthink.order.lock.annotation.DistributedKeyLock;
 import cc.microthink.order.message.out.OrderEventOutService;
 import cc.microthink.order.repository.OrderRepository;
 import cc.microthink.order.security.SecurityUtils;
@@ -20,7 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
@@ -36,13 +45,16 @@ public class MKOrderService {
 
     private final OrderEventOutService eventOutService;
 
+    private final DistributedLocker distributedLocker;
+
     public MKOrderService(OrderRepository orderRepository,
                           @Qualifier("cc.microthink.order.client.product.ProductClient") ProductClient productClient,
-                          CustomerClient customerClient, OrderEventOutService eventOutService) {
+                          CustomerClient customerClient, OrderEventOutService eventOutService, DistributedLocker distributedLocker) {
         this.orderRepository = orderRepository;
         this.productClient = productClient;
         this.customerClient = customerClient;
         this.eventOutService = eventOutService;
+        this.distributedLocker = distributedLocker;
     }
 
     public CreateOrderResult createOrder(CreateOrderDTO orderDTO) {
@@ -68,14 +80,22 @@ public class MKOrderService {
         order.addItems(orderItem);
         Order savedOrder = orderRepository.save(order);
         boolean success = eventOutService.sendOrderCreatedEvent(savedOrder);
-        if (log.isInfoEnabled()) {
-            log.info("createOrder: sendOrderCreatedEvent result:{}", success);
-        }
+
+        log.info("createOrder: sendOrderCreatedEvent result:{}", success);
+
         return new CreateOrderResult(savedOrder.getId(), savedOrder.getSerialNo().toString(), productDTO.getName(), savedOrder.getStatus().toString());
     }
 
-    public boolean cancelOrder(Long orderId) {
-        log.debug("---cancelOrder---");
+    @DistributedKeyLock(key = "#orderId", prefix = "Cancel_Order_")
+    public boolean cancelOrder(Long orderId, OrderCancelReason cancelReason) {
+        log.debug("cancelOrder: orderId:{}, cancelReason:{}", orderId, cancelReason);
+        if (orderId == null || orderId == 0) {
+            log.warn("cancelOrder: Empty orderId and ignore it.");
+            return true;
+        }
+
+        log.warn("#### cancelOrder: Get a locker: " + orderId);
+
         Order order = orderRepository.getById(orderId);
         if (order.isPending()) {
             log.warn("cancelOrder: Order can't be cancelled as its pending. orderId:{}", orderId);
@@ -91,13 +111,13 @@ public class MKOrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
+        order.setCancelReason(cancelReason);
         orderRepository.save(order);
 
-        boolean success = eventOutService.sendOrderCancelEvent(order);
-        if (log.isInfoEnabled()) {
-            log.info("cancelOrder: sendOrderCancelEvent result:{}", success);
-        }
         //TODO check: success of sendOrderCancelEvent
+        boolean success = eventOutService.sendOrderCancelEvent(order);
+        log.info("cancelOrder: sendOrderCancelEvent result:{}", success);
+
         return true;
     }
 
@@ -111,6 +131,8 @@ public class MKOrderService {
         }
         else {
             order.setStatus(OrderStatus.CANCELLED);
+            order.setCancelReason(OrderCancelReason.OUT_OF_STOCK);
+            order.cancelItems(OrderItemStatus.OUT_OF_STOCK);
         }
         orderRepository.save(order);
 
@@ -120,13 +142,47 @@ public class MKOrderService {
     public void msgConsumeCancelOrderResult(String msgId, Long orderId) {
         log.debug("---msgConsumeCancelOrderResult---");
         Order order = orderRepository.getById(orderId);
-        //TODO Set cancel flag
+        //Set items status to BACK_ORDER
+        order.cancelItems(OrderItemStatus.BACK_ORDER);
         orderRepository.save(order);
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    /**
+     * Check time out orders.
+     */
+//    @Scheduled(cron = "0 0/10 * * * ?")
     public void cancelNotPaymentOrders() {
-        //TODO
+        log.debug("---cancelNotPaymentOrders begin---");
+        //running just only one server.
+        //one server running and lock
+        boolean successLock = false;
+        DistributedLock lock = this.distributedLocker.getLock("Schedule_Cancel_Order");
+        try {
+            successLock = lock.tryLock(1, TimeUnit.SECONDS);
+            if (successLock) {
+                log.debug("---cancelNotPaymentOrders: Success to get a distributedLock.");
+                LocalDateTime beforeTime = LocalDateTime.now().minusMinutes(30);
+                List<Order> orderList = orderRepository.findByStatusAndCreatedTimeLessThan(OrderStatus.CREATED, beforeTime.toInstant(ZoneOffset.UTC));
+                for (Order order : orderList) {
+                    cancelOrder(order.getId(), OrderCancelReason.TIME_OUT);
+                }
+
+                Thread.sleep(3000);
+            }
+            else {
+                log.warn("===> cancelNotPaymentOrders: Fail to get a distributedLock.");
+            }
+        }
+        catch (Exception e) {
+            log.error("cancelNotPaymentOrders: Fail to scheduled task for cancelling orders.", e);
+        }
+        finally {
+            if (successLock) {
+                lock.release();
+                log.warn("---cancelNotPaymentOrders: lock.release---");
+            }
+        }
+        log.debug("---cancelNotPaymentOrders end---");
     }
 
 }

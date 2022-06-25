@@ -1,5 +1,7 @@
 package cc.microthink.order.domain;
 
+import cc.microthink.order.domain.enumeration.OrderCancelReason;
+import cc.microthink.order.domain.enumeration.OrderItemStatus;
 import cc.microthink.order.domain.enumeration.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
@@ -49,7 +51,13 @@ public class Order implements Serializable {
     @Column(name = "remark")
     private String remark;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cancel_reason")
+    private OrderCancelReason cancelReason;
+
+    //TODO add version field
+
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "order" }, allowSetters = true)
     private Set<OrderItem> items = new HashSet<>();
@@ -62,6 +70,7 @@ public class Order implements Serializable {
         this.custId = custId;
         this.remark = remark;
 
+        this.cancelReason = OrderCancelReason.NON;
         this.status = OrderStatus.PENDING;
         this.createdTime = Instant.now();
         this.actionTime = Instant.now();
@@ -202,6 +211,23 @@ public class Order implements Serializable {
         this.items.remove(orderItem);
         orderItem.setOrder(null);
         return this;
+    }
+
+    public OrderCancelReason getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(OrderCancelReason cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public Order cancelReason(OrderCancelReason cancelReason) {
+        this.setCancelReason(cancelReason);
+        return this;
+    }
+
+    public void cancelItems(OrderItemStatus itemStatus) {
+        this.getItems().forEach(item -> item.setStatus(itemStatus));
     }
 
     public boolean isPending() {
