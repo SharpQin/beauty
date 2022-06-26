@@ -68,7 +68,7 @@ public class HzLockBasedDistributedLocker implements DistributedLocker {
         }
 
         @Override
-        public void release() {
+        public void unlock() {
             try {
                 lock.unlock();
                 //((DistributedObject) lock).destroy();

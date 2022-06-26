@@ -56,7 +56,7 @@ public class HzMapBasedDistributedLocker implements DistributedLocker {
         }
 
         @Override
-        public void release() {
+        public void unlock() {
             try {
                 txLockMap.unlock(key);
             } catch (Exception e){

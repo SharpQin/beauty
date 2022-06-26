@@ -1,6 +1,7 @@
 package cc.microthink.order.lock;
 
 import cc.microthink.order.lock.annotation.DistributedKeyLock;
+import cc.microthink.order.security.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,7 +28,7 @@ public class DistributedLockAspect {
 
     private String getKeyName(String key) {
         if (key.indexOf(".") != -1) {
-            return key.substring(0, key.indexOf(".") -1);
+            return key.substring(0, key.indexOf("."));
         }
         else {
             return key;
@@ -38,7 +39,7 @@ public class DistributedLockAspect {
         if (key.indexOf(".") == -1) {
             return srcObj.toString();
         }
-        String[] properties = key.split(".");
+        String[] properties = key.split("\\.");
         Object targetObj = srcObj;
         for (int i=1; i<properties.length; i++) {
             String property = properties[i];
@@ -57,12 +58,28 @@ public class DistributedLockAspect {
         return targetObj.toString();
     }
 
+    private String addPrefix(String lockKey, DistributedKeyLock annotation) {
+        String prefix = "";
+        if (annotation.usePrefix()) {
+            prefix = annotation.prefix();
+        }
+        if (annotation.useLoginUser()) {
+            prefix += SecurityUtils.getCurrentUserLogin().orElseThrow();
+        }
+        if (StringUtils.isNotEmpty(prefix)) {
+            log.debug("lockedProcess: Use prefix:{}", prefix);
+        }
+        return prefix + lockKey;
+    }
+
     @Around(value="@annotation(cc.microthink.order.lock.annotation.DistributedKeyLock)")
     public Object lockedProcess(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed = null;
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         DistributedKeyLock annotation = method.getAnnotation(DistributedKeyLock.class);
+
+        log.debug("lockedProcess: Enter method:{}", method.getName());
 
         String lockKey;
         //annotation.keyType() == DistributedKeyLock.KeyType.DYNAMIC
@@ -83,15 +100,12 @@ public class DistributedLockAspect {
                 throw new RuntimeException("Invalid DistributedKeyLock configuration");
             }
             Object argValue = joinPoint.getArgs()[index];
-
             lockKey = getKeyValue(key, argValue);
-            if (annotation.usePrefix()) {
-                lockKey = annotation.prefix() + lockKey;
-            }
         }
         else {
             lockKey = annotation.key();
         }
+        lockKey = addPrefix(lockKey, annotation);
         if (StringUtils.isBlank(lockKey)) {
             throw new IllegalArgumentException("Invalid distributed key.");
         }
@@ -101,6 +115,7 @@ public class DistributedLockAspect {
         try {
             if (annotation.lockType() == DistributedKeyLock.GetLockType.BLOCK) {
                 lock.tryLock();
+                successLock = true;
             }
             else if(annotation.lockType() == DistributedKeyLock.GetLockType.BLOCK_TRY) {
                 successLock = lock.tryLock(annotation.timeout(), annotation.timeUnit());
@@ -108,17 +123,22 @@ public class DistributedLockAspect {
             else {
                 successLock = lock.tryLock();
             }
+
             if (successLock) {
                 proceed = joinPoint.proceed();
+            }
+            else if (annotation.lockFailBehavior() == DistributedKeyLock.FailBehavior.EXCEPTION) {
+                throw new DistributedLockGotFailureException("Fail to get a distributed lock.");
             }
         }
         catch (Exception e) {
             log.error("cancelNotPaymentOrders: Fail to scheduled task for cancelling orders.", e);
+            throw e;
         }
         finally {
             if (successLock) {
-                lock.release();
-                log.warn("---cancelNotPaymentOrders: lock.release---");
+                lock.unlock();
+                log.debug("lockedProcess: unlock method:{}", method.getName());
             }
         }
         return proceed;

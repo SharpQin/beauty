@@ -150,7 +150,7 @@ public class MKOrderService {
     /**
      * Check time out orders.
      */
-//    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void cancelNotPaymentOrders() {
         log.debug("---cancelNotPaymentOrders begin---");
         //running just only one server.
@@ -158,7 +158,7 @@ public class MKOrderService {
         boolean successLock = false;
         DistributedLock lock = this.distributedLocker.getLock("Schedule_Cancel_Order");
         try {
-            successLock = lock.tryLock(1, TimeUnit.SECONDS);
+            successLock = lock.tryLock(200, TimeUnit.MILLISECONDS);
             if (successLock) {
                 log.debug("---cancelNotPaymentOrders: Success to get a distributedLock.");
                 LocalDateTime beforeTime = LocalDateTime.now().minusMinutes(30);
@@ -178,7 +178,7 @@ public class MKOrderService {
         }
         finally {
             if (successLock) {
-                lock.release();
+                lock.unlock();
                 log.warn("---cancelNotPaymentOrders: lock.release---");
             }
         }
