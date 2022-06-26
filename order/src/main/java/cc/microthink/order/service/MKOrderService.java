@@ -1,6 +1,7 @@
 package cc.microthink.order.service;
 
 import cc.microthink.common.dto.customer.CustomerDTO;
+import cc.microthink.common.dto.product.OrderProductDTO;
 import cc.microthink.common.dto.product.ProductDTO;
 import cc.microthink.order.client.customer.CustomerClient;
 import cc.microthink.order.client.product.ProductClient;
@@ -17,6 +18,7 @@ import cc.microthink.order.repository.OrderRepository;
 import cc.microthink.order.security.SecurityUtils;
 import cc.microthink.order.service.dto.CreateOrderDTO;
 import cc.microthink.order.service.dto.CreateOrderResult;
+import cc.microthink.order.service.dto.OrderItemResultDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,11 +27,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -61,29 +67,31 @@ public class MKOrderService {
         if (SecurityUtils.getCurrentUserLogin().isPresent()) {
             log.info("getProductById: loginUser:{}", SecurityUtils.getCurrentUserLogin().get());
         }
-        ProductDTO productDTO = this.productClient.getProductById(orderDTO.getProductId());
-        log.info("createOrder: productDTO.name:{}", productDTO.getName());
+        List<OrderProductDTO> products = this.productClient.getProductsByOrderItems(orderDTO.getItems());
+        log.info("createOrder: productDTO.size:{}", products.size());
 
         //check product stock
-        if (productDTO.getStock() < orderDTO.getCount()) {
+        if (products.stream().anyMatch(product -> product.getStatus() == ProductDTO.ProductStatus.SELL_OUT)) {
             throw new RuntimeException("Not enough stock.");
         }
-
         CustomerDTO customerDTO = customerClient.getCustomerInfo(false, false);
         log.info("createOrder: customerDTO.name:{}", customerDTO.getNickName());
+        BigDecimal totalPrice = products.stream().map(prod -> prod.getPrice().multiply(BigDecimal.valueOf(prod.getOrderCount()))).reduce(BigDecimal::add).get();
 
-        BigDecimal totalPrice = productDTO.getPrice();
         Order order = new Order(UUID.randomUUID(), totalPrice, customerDTO.getId(), orderDTO.getRemark());
         //order items
-        BigDecimal itemPrice = productDTO.getPrice().multiply(BigDecimal.valueOf(orderDTO.getCount()));
-        OrderItem orderItem = new OrderItem(productDTO.getId(), orderDTO.getCount(), itemPrice, productDTO.getPrice());
-        order.addItems(orderItem);
+        List<OrderItem> orderItems = products.stream().map(prod -> new OrderItem(prod.getId(), prod.getOrderCount(), prod.getPrice().multiply(BigDecimal.valueOf(prod.getOrderCount())), prod.getPrice())).collect(Collectors.toList());
+        order.setItems(orderItems);
         Order savedOrder = orderRepository.save(order);
-        boolean success = eventOutService.sendOrderCreatedEvent(savedOrder);
 
+        CreateOrderResult result = new CreateOrderResult(savedOrder.getId(), savedOrder.getSerialNo().toString(), savedOrder.getStatus().toString());
+        List<OrderItemResultDTO> items = products.stream().map(prod ->
+            new OrderItemResultDTO(prod.getId(), prod.getName(), prod.getPrice(), prod.getImage(), prod.getOrderCount())).collect(Collectors.toList());
+
+        boolean success = eventOutService.sendOrderCreatedEvent(savedOrder);
         log.info("createOrder: sendOrderCreatedEvent result:{}", success);
 
-        return new CreateOrderResult(savedOrder.getId(), savedOrder.getSerialNo().toString(), productDTO.getName(), savedOrder.getStatus().toString());
+        return result;
     }
 
     @DistributedKeyLock(key = "#orderId", prefix = "Cancel_Order_")
@@ -152,7 +160,7 @@ public class MKOrderService {
      */
     @Scheduled(cron = "0 0/10 * * * ?")
     public void cancelNotPaymentOrders() {
-        log.debug("---cancelNotPaymentOrders begin---");
+        log.info("---cancelNotPaymentOrders begin---");
         //running just only one server.
         //one server running and lock
         boolean successLock = false;
@@ -162,15 +170,15 @@ public class MKOrderService {
             if (successLock) {
                 log.debug("---cancelNotPaymentOrders: Success to get a distributedLock.");
                 LocalDateTime beforeTime = LocalDateTime.now().minusMinutes(30);
-                List<Order> orderList = orderRepository.findByStatusAndCreatedTimeLessThan(OrderStatus.CREATED, beforeTime.toInstant(ZoneOffset.UTC));
-                for (Order order : orderList) {
+                Instant instant = beforeTime.toInstant(ZoneOffset.ofHours(8));  // ZoneOffset.ofHours(8), ZoneOffset.UTC
+                List<Order> orderList = orderRepository.findByStatusAndCreatedTimeLessThan(OrderStatus.CREATED, instant);  //Note: use time zone in hibernate api
+                 for (Order order : orderList) {
+                    log.info("cancelNotPaymentOrders: order={}", order);
                     cancelOrder(order.getId(), OrderCancelReason.TIME_OUT);
                 }
-
-                Thread.sleep(3000);
             }
             else {
-                log.warn("===> cancelNotPaymentOrders: Fail to get a distributedLock.");
+                log.info("===> cancelNotPaymentOrders: Fail to get a distributedLock.");
             }
         }
         catch (Exception e) {
@@ -179,10 +187,10 @@ public class MKOrderService {
         finally {
             if (successLock) {
                 lock.unlock();
-                log.warn("---cancelNotPaymentOrders: lock.release---");
+                log.debug("---cancelNotPaymentOrders: lock.release---");
             }
         }
-        log.debug("---cancelNotPaymentOrders end---");
+        log.info("---cancelNotPaymentOrders end---");
     }
 
 }

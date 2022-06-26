@@ -1,21 +1,29 @@
 package cc.microthink.order.service.dto;
 
+import java.util.List;
+
 public class CreateOrderResult {
 
     private Long orderId;
 
     private String serialNo;
 
-    private String product;
+    private List<OrderItemResultDTO> items;
 
     private String status;
 
     public CreateOrderResult() {}
 
-    public CreateOrderResult(Long orderId, String serialNo, String product, String status) {
+    public CreateOrderResult(Long orderId, String serialNo, String status) {
         this.orderId = orderId;
         this.serialNo = serialNo;
-        this.product = product;
+        this.status = status;
+    }
+
+    public CreateOrderResult(Long orderId, String serialNo, List<OrderItemResultDTO> items, String status) {
+        this.orderId = orderId;
+        this.serialNo = serialNo;
+        this.items = items;
         this.status = status;
     }
 
@@ -35,12 +43,12 @@ public class CreateOrderResult {
         this.serialNo = serialNo;
     }
 
-    public String getProduct() {
-        return product;
+    public List<OrderItemResultDTO> getItems() {
+        return items;
     }
 
-    public void setProduct(String product) {
-        this.product = product;
+    public void setItems(List<OrderItemResultDTO> items) {
+        this.items = items;
     }
 
     public String getStatus() {

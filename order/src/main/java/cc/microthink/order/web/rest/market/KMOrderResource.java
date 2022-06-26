@@ -24,8 +24,12 @@ public class KMOrderResource {
 
     @GetMapping("/order/cancel")
     public String cancelOrder(Long orderId) {
-        boolean result = orderService.cancelOrder(orderId, OrderCancelReason.MANUAL);
-        return String.valueOf(result);
+
+        orderService.cancelNotPaymentOrders();
+        return "success";
+
+//        boolean result = orderService.cancelOrder(orderId, OrderCancelReason.MANUAL);
+//        return String.valueOf(result);
     }
 
 }

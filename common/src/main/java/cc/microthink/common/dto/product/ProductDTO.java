@@ -74,6 +74,14 @@ public class ProductDTO {
         this.status = status;
     }
 
+    public boolean isAvailable() {
+        return this.status == ProductStatus.AVAILABLE;
+    }
+
+    public boolean isSellOut() {
+        return this.status == ProductStatus.SELL_OUT;
+    }
+
     public static enum ProductType {
         SUIT,
         SINGLE,

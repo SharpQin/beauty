@@ -1,12 +1,13 @@
 package cc.microthink.product.web.rest.market;
 
-import cc.microthink.common.dto.product.ProductDTO;
+import cc.microthink.common.dto.order.OrderItemDTO;
+import cc.microthink.common.dto.product.OrderProductDTO;
 import cc.microthink.product.service.MKProductService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/mki")
@@ -24,8 +25,13 @@ public class MKProductResource {
      * @return
      */
     @GetMapping("/product/{id}")
-    ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(productService.getProductById(id));
+    ResponseEntity<OrderProductDTO> getProductById(@PathVariable("id") Long id, @Param("orderCount") Integer orderCount) {
+        return ResponseEntity.ok().body(productService.getProductById(id, orderCount));
+    }
+
+    @PostMapping( path ="/productsByOrder")
+    List<OrderProductDTO> getProductsByOrderItems(@RequestBody List<OrderItemDTO> items) {
+        return productService.getProductsByOrderItems(items);
     }
 
 }

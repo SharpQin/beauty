@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -60,7 +58,7 @@ public class Order implements Serializable {
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "order" }, allowSetters = true)
-    private Set<OrderItem> items = new HashSet<>();
+    private List<OrderItem> items = new ArrayList<>();
 
     public Order() {}
 
@@ -182,11 +180,11 @@ public class Order implements Serializable {
         this.remark = remark;
     }
 
-    public Set<OrderItem> getItems() {
+    public List<OrderItem> getItems() {
         return this.items;
     }
 
-    public void setItems(Set<OrderItem> orderItems) {
+    public void setItems(List<OrderItem> orderItems) {
         if (this.items != null) {
             this.items.forEach(i -> i.setOrder(null));
         }
@@ -196,7 +194,7 @@ public class Order implements Serializable {
         this.items = orderItems;
     }
 
-    public Order items(Set<OrderItem> orderItems) {
+    public Order items(List<OrderItem> orderItems) {
         this.setItems(orderItems);
         return this;
     }

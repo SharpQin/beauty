@@ -1,27 +1,31 @@
 package cc.microthink.order.service.dto;
 
+import cc.microthink.common.dto.order.OrderItemDTO;
+
+import java.util.List;
+
 public class CreateOrderDTO {
 
-    private Long productId;
+    private List<OrderItemDTO> items;
 
-    private Integer count;
+    private Long addressId;
 
     private String remark;
 
-    public Long getProductId() {
-        return productId;
+    public List<OrderItemDTO> getItems() {
+        return items;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
     }
 
-    public Integer getCount() {
-        return count;
+    public Long getAddressId() {
+        return addressId;
     }
 
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
     }
 
     public String getRemark() {
