@@ -22,6 +22,7 @@ public class Address implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    //zipCode
     @Size(max = 10)
     @Column(name = "postal_code", length = 10)
     private String postalCode;
@@ -29,6 +30,8 @@ public class Address implements Serializable {
     @Size(max = 30)
     @Column(name = "city", length = 30)
     private String city;
+
+    //private String street;
 
     @NotNull
     @Size(max = 120)
@@ -38,9 +41,20 @@ public class Address implements Serializable {
     @Column(name = "default_addr")
     private Boolean defaultAddr;
 
+//    @Embedded
+//    private Location location;
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "addresses", "accounts" }, allowSetters = true)
     private Customer customer;
+
+//    public Location getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(Location location) {
+//        this.location = location;
+//    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
