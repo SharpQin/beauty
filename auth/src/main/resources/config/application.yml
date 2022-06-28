@@ -146,6 +146,10 @@ spring:
           destination: mkuser-topic
           content-type: application/json
           producer.partition-count: 10
+        authupdate-out-0:
+          destination: auth-topic
+          content-type: text/plain
+          producer.partition-count: 1
 
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.

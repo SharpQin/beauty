@@ -2,6 +2,7 @@ package cc.microthink.auth.service;
 
 import cc.microthink.auth.domain.Authority;
 import cc.microthink.auth.domain.Role;
+import cc.microthink.auth.message.out.MessageOutService;
 import cc.microthink.auth.repository.AuthorityRepository;
 import cc.microthink.auth.repository.RoleRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -34,21 +35,28 @@ public class RedisService {
     }
 
     public void initialRedisAuthorities() {
+        this.refreshAllRoles();
+        refreshAllAuthorities();
+    }
+
+    public void refreshAllRoles() {
         Flux<Role> roleFlux = roleRepository.findAll();
         //.filter(role -> StringUtils.isNotBlank(role.getAuthorities()))
         roleFlux.subscribe(role -> {
             saveRedisRoleAuthorities(role);
         });
+    }
 
-        StringBuilder authoritiesSb = new StringBuilder(128);
+    public void refreshAllAuthorities() {
         Flux<Authority> menuFlux = authorityRepository.findAll();
         menuFlux
             .filter(auth -> StringUtils.isNotBlank(auth.getAuthKey()))
             .map(auth -> String.format("%s,%s,%s", auth.getLink(), auth.getMethod(), auth.getAuthKey()))
             .reduce((str1, str2) -> str1 + ";" + str2)
-            .subscribe(allAuthStr -> saveRedisAllAuthorities(allAuthStr));
+            .subscribe(allAuthStr -> {
+                saveRedisAllAuthorities(allAuthStr);
+            });
     }
-
 
     public void saveRedisRoleAuthorities(Role role) {
         /*
@@ -74,6 +82,19 @@ public class RedisService {
         RBucket<String> redisRole = redissonClient.getBucket(redisKey);
         redisRole.set(role.getAuthorities());
         logger.info("saveRedisRoleAuthorities: role:{} and role Authorities:{}", role.getName(), role.getAuthorities());
+    }
+
+    public void removeRedisRole(String roleName) {
+        logger.debug("removeRedisRole: roleName:{}", roleName);
+        String redisKey = "ROLE_KEY_" + roleName;
+        RBucket<String> redisRole = redissonClient.getBucket(redisKey);
+        boolean deleteResult = redisRole.delete();
+        if (!deleteResult) {
+            logger.warn("removeRedisRole: Fail to remove redis key:{}", redisKey);
+        }
+        else {
+            logger.warn("removeRedisRole: Success to remove redis key:{}", redisKey);
+        }
     }
 
     public String getRedisRoleAuthorities(String roleName) {

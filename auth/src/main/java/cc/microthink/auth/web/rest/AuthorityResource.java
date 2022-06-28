@@ -232,4 +232,9 @@ public class AuthorityResource {
                     .build()
             );
     }
+
+    @GetMapping("/menus/refresh")
+    public Mono<Void> refresh() {
+        return menuService.refreshAuthorities();
+    }
 }

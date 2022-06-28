@@ -21,8 +21,11 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
 
-    public RoleService(RoleRepository roleRepository) {
+    private final RedisService redisService;
+
+    public RoleService(RoleRepository roleRepository, RedisService redisService) {
         this.roleRepository = roleRepository;
+        this.redisService = redisService;
     }
 
     /**
@@ -34,8 +37,8 @@ public class RoleService {
     public Mono<Role> save(Role role) {
         log.debug("Request to save Role : {}", role);
         role.changeForSave();
-        //TODO update redis
-        return roleRepository.save(role);
+        //update redis
+        return roleRepository.save(role).doOnSuccess(r -> redisService.saveRedisRoleAuthorities(r));
     }
 
     /**
@@ -48,7 +51,7 @@ public class RoleService {
         log.debug("Request to save Role : {}", role);
         role.changeForSave();
         //TODO update redis
-        return roleRepository.save(role);
+        return roleRepository.save(role).doOnSuccess(r -> redisService.saveRedisRoleAuthorities(r));
     }
 
     /**
@@ -76,7 +79,7 @@ public class RoleService {
 
                 return existingRole;
             })
-            .flatMap(roleRepository::save);
+            .flatMap(roleRepository::save).doOnSuccess(r -> redisService.saveRedisRoleAuthorities(r));
     }
 
     /**
@@ -130,7 +133,10 @@ public class RoleService {
      */
     public Mono<Void> delete(Long id) {
         log.debug("Request to delete Role : {}", id);
-        //TODO update redis
-        return roleRepository.deleteById(id);
+        //update redis
+        return roleRepository.findById(id).zipWith(roleRepository.deleteById(id)).map(t -> {
+            redisService.removeRedisRole(t.getT1().getName());
+            return t.getT2();
+        });
     }
 }

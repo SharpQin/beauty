@@ -1,6 +1,7 @@
 package cc.microthink.auth.service;
 
 import cc.microthink.auth.domain.Authority;
+import cc.microthink.auth.message.out.MessageOutService;
 import cc.microthink.auth.repository.AuthorityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,14 @@ public class AuthorityService {
 
     private final AuthorityRepository menuRepository;
 
-    public AuthorityService(AuthorityRepository menuRepository) {
+    private final RedisService redisService;
+
+    private final MessageOutService messageOutService;
+
+    public AuthorityService(AuthorityRepository menuRepository, RedisService redisService, MessageOutService messageOutService) {
         this.menuRepository = menuRepository;
+        this.redisService = redisService;
+        this.messageOutService = messageOutService;
     }
 
     /**
@@ -128,5 +135,21 @@ public class AuthorityService {
     public Mono<Void> delete(Long id) {
         log.debug("Request to delete Menu : {}", id);
         return menuRepository.deleteById(id);
+    }
+
+    /**
+     * Set the latest authorities into redis.
+     * @return
+     */
+    public Mono<Void> refreshAuthorities() {
+        redisService.refreshAllAuthorities();
+        boolean success = messageOutService.sendAuthUpdNotify();
+        if (success) {
+            log.info("refreshAllAuthorities: Success to sendAuthUpdNotify");
+        }
+        else {
+            log.warn("refreshAllAuthorities: Fail to sendAuthUpdNotify");
+        }
+        return Mono.empty();
     }
 }
