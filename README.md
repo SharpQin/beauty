@@ -26,6 +26,7 @@ Extract frontend code from gateway project. Maintain gateway independence and st
 - Support Domain Object Security (ACLs).
 - Using kafka to communication between microservices.
 - Support full-text search with Elasticsearch.
+- Distributed locker base on Hazelcast.
 - Using Liquibase for DB script management.
 - Kubernetes deployment.
 
