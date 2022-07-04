@@ -5,7 +5,7 @@ Microservice base code were generated with JHipster, but I have changed a lot fo
 Extract frontend code from gateway project. Maintain gateway independence and stability.
 
 ## Projects description as below:
-- gateway - Authorize for management user and route to microservices.
+- gateway - Authorize for manager and route to microservices.
 - gatewaymk - Authorize for market customer and route to microservices.
 - auth-service - Authentication Service which support two type of users and manage users and authority assignment.
 - customer-service - Manage customer's address and credit cards.
