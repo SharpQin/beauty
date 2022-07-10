@@ -1,0 +1,11 @@
+id;order_id;order_serial;cust_id;accinfo;money;payment_type;payment_status;payment_time
+1;36635;Loan;41795;Bacon core Rustic;13119;Wechat;CANCEL;2022-07-09T08:10:33
+2;33338;Optimization lime deploy;46570;product Fish Infrastructure;95448;Alipay;SUCCESS;2022-07-09T12:28:35
+3;50252;moratorium;15293;Wooden;37440;Alipay;PENDING;2022-07-09T01:47:28
+4;68308;Sleek system deposit;78229;Multi-channelled Steel;79247;Alipay;PENDING;2022-07-09T06:24:56
+5;39371;throughput Nigeria;26655;Vermont;3132;Wechat;CANCEL;2022-07-09T04:39:29
+6;30005;Legacy Usability indigo;75478;AI;5026;Alipay;FAIL;2022-07-09T02:30:22
+7;38118;Table Rubber Monitored;33371;Awesome Metrics Azerbaijan;62975;Alipay;SUCCESS;2022-07-09T05:02:09
+8;63696;incubate Beauty;64178;connecting;62641;Alipay;SUCCESS;2022-07-08T20:41:04
+9;68270;wireless;94315;optical Regional Bedfordshire;15109;Wechat;CANCEL;2022-07-09T03:47:39
+10;79024;hour;81035;Chair Brunei Buckinghamshire;53784;Alipay;FAIL;2022-07-09T00:49:20

@@ -1,0 +1,52 @@
+{
+  "applications": ["gateway", "shipping"],
+  "changelogDate": "20220709172919",
+  "clientRootFolder": "shipping",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "shipping",
+  "fields": [
+    {
+      "fieldName": "orderId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "orderSerial",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "custId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "custAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "ShippingStatus",
+      "fieldValues": "NON,PICKUP,SENT,TRANSPORTING,ACHIEVED"
+    },
+    {
+      "fieldName": "createdTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "sentTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "achievedTime",
+      "fieldType": "Instant"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "shipping",
+  "name": "Shipping",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

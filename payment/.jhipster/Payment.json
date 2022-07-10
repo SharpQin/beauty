@@ -1,0 +1,55 @@
+{
+  "applications": ["gateway", "payment"],
+  "changelogDate": "20220709172919",
+  "clientRootFolder": "payment",
+  "databaseType": "sql",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "payment",
+  "fields": [
+    {
+      "fieldName": "orderId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "orderSerial",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "custId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "accinfo",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "money",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "paymentType",
+      "fieldType": "PaymentType",
+      "fieldValues": "Wechat,Alipay"
+    },
+    {
+      "fieldName": "paymentStatus",
+      "fieldType": "PaymentStatus",
+      "fieldValues": "PENDING,CANCEL,FAIL,SUCCESS"
+    },
+    {
+      "fieldName": "paymentTime",
+      "fieldType": "Instant"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "microserviceName": "payment",
+  "name": "Payment",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}
