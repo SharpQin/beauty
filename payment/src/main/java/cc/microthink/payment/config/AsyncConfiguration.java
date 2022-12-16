@@ -18,7 +18,6 @@ import tech.jhipster.async.ExceptionHandlingAsyncTaskExecutor;
 @Configuration
 @EnableAsync
 @EnableScheduling
-@EnableBinding({ KafkaSseConsumer.class, KafkaSseProducer.class })
 public class AsyncConfiguration implements AsyncConfigurer {
 
     private final Logger log = LoggerFactory.getLogger(AsyncConfiguration.class);
